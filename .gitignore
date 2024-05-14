@@ -1,6 +1,16 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django,visualstudiocode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,visualstudiocode,python
 
+### Custom ###
+*.xlsx
+*.xlsm
+*.xlsb
+*.xltx
+*.xls
+*.csv
+*.cell
+
+
 ### Django ###
 *.log
 *.pot
