@@ -5,26 +5,30 @@ import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 // import { Button, Nav } from "react-bootstrap";
 // react-router-dom lib
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 // custom
 import Login from "./page/login";
 import Nav from "./page/nav";
 import Collections from "./page/collections"
 import Main from "./page/main"
+import Regist from "./page/regist"
+import Page404 from "./page/page404"
+import Profile from "./page/profile"
 
 function App() {
   return (
-    <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/nav" element={<Nav />}>
-          <Route path="collections" element={<Collections />} />
+        <Route path="/login" exact element={<Login />} />
+        <Route path="/regist" exact element={<Regist />} />
+        <Route path="/404" exact element={<Page404 />} />
+        <Route path="/nav" exact element={<Nav />}>
+          <Route path="*" element={<Navigate to="/nav/" />} />
           <Route index element={<Main />} />
-          <Route path="*" element={<Navigate to="/nav/collections" />} />
+          <Route path="collections" element={<Collections />} />
+          <Route path="profile" exact element={<Profile />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
-    </BrowserRouter>
   );
 }
 
