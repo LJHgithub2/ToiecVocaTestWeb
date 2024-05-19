@@ -14,7 +14,8 @@ import Main from "./page/main"
 import Regist from "./page/regist"
 import Page404 from "./page/page404"
 import Profile from "./page/profile"
-import ListItem from "./components/listItem"
+import ItemList from "./components/itemList"
+import Test from "./page/test"
 
 function App() {
   return (
@@ -27,9 +28,10 @@ function App() {
           <Route index element={<Main />} />
           <Route path="collections" element={<Collections />} />
           <Route path="profile" exact element={<Profile />} />
-          <Route path="list" element={<ListItem />} />
+          <Route path="list" element={<ItemList />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/test" exact element={<Test />} />
       </Routes>
   );
 }

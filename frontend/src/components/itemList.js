@@ -1,4 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import Item from "./Item.js";
+import React, { useState } from 'react';
 
 const items = [
   {
@@ -27,44 +29,24 @@ const items = [
 const people = [
   {
     word: "apple",
-    mean: "사과",
-    role: "명사",
+    mean: "asdfafsdsfasfasdfsfsdadfsdfasfsdfsadfㅇㄹ마ㅓ리ㅏㅁ니런아ㅓ린ㄹㄴㅇㄻㄹㄴㄹㄴㄹㄴㅇㄹ마ㅓ리ㅏㅁ니런아ㅓ린ㄹㄴㅇㄻㄹㄴㄹㄴㄹㄴsfsadfasfs",
+    role: "ㅇㄹ마ㅓ리ㅏㅁ니런아ㅓ린ㄹㄴㅇㄻㄹㄴㄹㄴㄹㄴㅁㄹㄴㅇ",
   },
   {
-    word: "apple",
+    word: "applsade",
     mean: "사과",
     role: "명사",
   },
 ];
 
-function Example() {
-  return (
-    <ul role="list" className="divide-y mb-0 divide-gray-100">
-      {people.map((person) => (
-        <li key={person.word} className="flex justify-between gap-x-6 py-1">
-          <div className="flex min-w-0 gap-x-4">
-            <div className="min-w-0 flex-auto">
-              <p className="text-3xl font-semibold leading-6 text-gray-900">
-                {person.word}
-              </p>
-            </div>
-          </div>
-          <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-            <p className="text-sm leading-6 text-gray-900">{person.mean}</p>
-            <p className="mt-1 text-xs leading-5 text-gray-500">
-            {person.role}
-            </p>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 export default function ListItem() {
   return (
     <>
-      <Example></Example>
+      <ul role="list" className="divide-y mb-0 divide-gray-100">
+      {people.map((person, index) => (
+        <Item person={person} index={index}></Item>
+      ))}
+      </ul>
       <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
         <div className="flex flex-1 justify-between sm:hidden">
           <a
