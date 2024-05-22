@@ -1,31 +1,61 @@
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Outlet } from 'react-router-dom';
+import { Fragment, useState, useEffect } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Outlet, useLocation } from "react-router-dom";
 
 const user = {
-  name: 'jong',
-  email: 'jong@example.com',
-  imageUrl:
-    '',
-}
-const navigation = [
-  { name: 'Dashboard', href: '/nav/main', current: true },
-  { name: 'collections', href: '/nav/collections', current: false },
-  { name: 'profile', href: '/nav/profile', current: false },
-  { name: '404', href: '/404', current: false },
-]
+  name: "jong",
+  email: "jong@example.com",
+  imageUrl: "",
+};
+const initialNavigation = [
+  { name: "Home", href: "/nav", current: false },
+  { name: "단어장", href: "/nav/collections", current: false },
+  { name: "일정", href: "/nav/calendar", current: false },
+  { name: "마이페이지", href: "/nav/profile", current: false },
+];
 const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
-]
-
+  { name: "Your Profile", href: "/nav/profile" },
+  { name: "Settings", href: "#" },
+  { name: "Sign out", href: "#" },
+];
+const routeLabels = {
+  profile: "마이페이지",
+  calendar: "일정",
+  nav: "Home",
+  collections: "단어장",
+  list: "단어 보기",
+  main: "Main", // 추가
+};
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
+}
+function getLastPathSegment(pathname) {
+  const segments = pathname.split("/").filter((segment) => segment); // 빈 문자열 제거
+  
+  return routeLabels[segments[segments.length - 1]]; // 마지막 세그먼트 반환
 }
 
 export default function Nav() {
+  const location = useLocation();
+  const lastSegment = getLastPathSegment(location.pathname);
+  const [navigation, setNavigation] = useState(initialNavigation);
+
+  useEffect(() => {
+    const updatedNavigation = navigation.map((item) => ({
+      ...item,
+      current: item.href === location.pathname.split("/").slice(0, 3).join("/") || item.href === location.pathname.split("/").slice(0, 3).join("/").replace(/\/$/, ''), // '/'가 있든 없든 같은지 확인
+    }));
+    setNavigation(updatedNavigation);
+  }, [location.pathname]);
+
+  const handleClick = (index) => {
+    const updatedNavigation = navigation.map((item, i) => ({
+      ...item,
+      current: i === index,
+    }));
+    setNavigation(updatedNavigation);
+  };
   return (
     <>
       {/*
@@ -37,32 +67,35 @@ export default function Nav() {
         ```
       */}
       <div className="min-h-full">
-        <Disclosure as="nav" className="bg-gray-800">
+        <Disclosure as="nav" className="bg-my-hover-color">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img
-                        className="h-8 w-8"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                        alt="Your Company"
-                      />
+                      <a href="/nav">
+                        <img
+                          className="h-12 w-12"
+                          src="/image/logo.png"
+                          alt="Your Company"
+                        />
+                      </a>
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item) => (
+                        {navigation.map((item, index) => (
                           <a
                             key={item.name}
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                              'rounded-md px-3 py-2 text-sm font-medium'
+                                ? "bg-gray-900 text-white"
+                                : "text-black decoration-white hover:bg-gray-700 hover:text-white",
+                              "rounded-md px-3 py-2 text-sm font-medium"
                             )}
-                            aria-current={item.current ? 'page' : undefined}
+                            aria-current={item.current ? "page" : undefined}
+                            onClick={() => handleClick(index)}
                           >
                             {item.name}
                           </a>
@@ -74,7 +107,7 @@ export default function Nav() {
                     <div className="ml-4 flex items-center md:ml-6">
                       <button
                         type="button"
-                        className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        className="relative rounded-full bg-gray-800 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">View notifications</span>
@@ -87,7 +120,11 @@ export default function Nav() {
                           <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="absolute -inset-1.5" />
                             <span className="sr-only">Open user menu</span>
-                            <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                            <img
+                              className="h-8 w-8 rounded-full"
+                              src={user.imageUrl}
+                              alt=""
+                            />
                           </Menu.Button>
                         </div>
                         <Transition
@@ -106,8 +143,8 @@ export default function Nav() {
                                   <a
                                     href={item.href}
                                     className={classNames(
-                                      active ? 'bg-gray-100' : '',
-                                      'block px-4 py-2 text-sm text-gray-700'
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700"
                                     )}
                                   >
                                     {item.name}
@@ -126,9 +163,15 @@ export default function Nav() {
                       <span className="absolute -inset-0.5" />
                       <span className="sr-only">Open main menu</span>
                       {open ? (
-                        <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                        <XMarkIcon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                        <Bars3Icon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
                       )}
                     </Disclosure.Button>
                   </div>
@@ -143,10 +186,12 @@ export default function Nav() {
                       as="a"
                       href={item.href}
                       className={classNames(
-                        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                        'block rounded-md px-3 py-2 text-base font-medium'
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-black hover:bg-gray-700 hover:text-white",
+                        "block rounded-md px-3 py-2 text-base font-medium"
                       )}
-                      aria-current={item.current ? 'page' : undefined}
+                      aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
                     </Disclosure.Button>
@@ -155,11 +200,19 @@ export default function Nav() {
                 <div className="border-t border-gray-700 pb-3 pt-4">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={user.imageUrl}
+                        alt=""
+                      />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{user.name}</div>
-                      <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
+                      <div className="text-base font-medium leading-none text-white">
+                        {user.name}
+                      </div>
+                      <div className="text-sm font-medium leading-none text-gray-400">
+                        {user.email}
+                      </div>
                     </div>
                     <button
                       type="button"
@@ -190,7 +243,9 @@ export default function Nav() {
 
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              {lastSegment}
+            </h1>
           </div>
         </header>
         <main>
@@ -201,5 +256,5 @@ export default function Nav() {
         </main>
       </div>
     </>
-  )
+  );
 }
