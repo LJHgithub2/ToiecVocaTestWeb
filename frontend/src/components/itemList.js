@@ -1,6 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Item from "./Item.js";
 import React, { useState } from 'react';
+import ItemNav from "./itemNav.js";
 
 const items = [
   {
@@ -36,12 +37,14 @@ const people = [
     word: "applsade",
     mean: "사과",
     role: "명사",
+    chapter: 1,
   },
 ];
 
 export default function ListItem() {
   return (
     <>
+      <ItemNav></ItemNav>
       <ul role="list" className="divide-y mb-0 divide-gray-100">
       {people.map((person, index) => (
         <Item person={person} index={index}></Item>
