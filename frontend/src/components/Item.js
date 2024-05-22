@@ -1,17 +1,25 @@
 import CheckBox from "./button/checkBox";
 import CounterBtn from "./button/counterBtn";
 import DetailView from "./detailView";
-import React, { useState } from "react";
+import React, { useState, useRef,useEffect } from "react";
 
 function Item(props) {
   var person = props.person;
-  var index = props.index;
   const [isOpen, setIsOpen] = useState(false);
+  const [maxHeight, setMaxHeight] = useState("0px");
+
+  const contentRef = useRef(null);
 
   const toggleAccordion = () => {
     setIsOpen(!isOpen);
   };
-
+  useEffect(() => {
+    if (isOpen) {
+      setMaxHeight(`${contentRef.current.scrollHeight}px`);
+    } else {
+      setMaxHeight("0px");
+    }
+  }, [isOpen]);
   return (
     <li key={person.word} className=" py-2">
       <div
@@ -65,11 +73,13 @@ function Item(props) {
       </div>
       {/* 아코디언으로 표시된 상세 정보 */}
       {isOpen && (
-        <div className="">
-          <div className="bg-white p-4 border shadow-md">
-            <p>Additional details about {person.word}</p>
-            <DetailView person={person}></DetailView>
-          </div>
+        <div 
+          ref = {contentRef}
+          className="transition-max-height duration-1000 overflow-hidden ease-in-out bg-white p-4 border shadow-md"
+          style = {{maxHeight }}
+        >
+          <p>Additional details about {person.word}</p>
+          <DetailView className="transition-all" person={person}></DetailView>
         </div>
       )}
     </li>
