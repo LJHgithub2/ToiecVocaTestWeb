@@ -2,10 +2,10 @@ import { useNavigate  } from "react-router-dom";
 const callouts = [
   {
     name: "노랭이 단어장",
-    description: "헤커스 단어장입니다.",
+    description: "해커스 단어장입니다.",
     imageSrc: "/image/collections/1.jpg",
     imageAlt: "단어장 이미지",
-    href: "/nav/collections/list",
+    href: "/collections/1",
   },
   {
     name: "Self-Improvement",
@@ -13,14 +13,14 @@ const callouts = [
     imageSrc: "/image/collections/2.jpg",
     imageAlt:
       "Wood table with porcelain mug, leather journal, brass pen, leather key ring, and a houseplant.",
-    href: "/nav/collections/list",
+    href: "/collections/1",
   },
   {
     name: "Travel",
     description: "Daily commute essentials",
     imageSrc: "/image/collections/3.jpg",
     imageAlt: "Collection of four insulated travel bottles on wooden shelf.",
-    href: "/nav/collections/list",
+    href: "/collections/1",
   },
 ];
 
