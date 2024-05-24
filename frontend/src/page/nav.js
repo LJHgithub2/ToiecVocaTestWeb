@@ -8,54 +8,51 @@ const user = {
   email: "jong@example.com",
   imageUrl: "",
 };
-const initialNavigation = [
-  { name: "Home", href: "/nav", current: false },
-  { name: "단어장", href: "/nav/collections", current: false },
-  { name: "일정", href: "/nav/calendar", current: false },
-  { name: "마이페이지", href: "/nav/profile", current: false },
+const initNavigation = [
+  { name: "Main", href: "/", current: false },
+  { name: "단어장", href: "/collections", current: false },
+  { name: "일정", href: "/calendar", current: false },
+  { name: "마이페이지", href: "/profile", current: false },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "/nav/profile" },
+  { name: "Your Profile", href: "/profile" },
   { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
 ];
-const routeLabels = {
-  profile: "마이페이지",
-  calendar: "일정",
-  nav: "Home",
-  collections: "단어장",
-  list: "단어 보기",
-  main: "Main", // 추가
-};
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-function getLastPathSegment(pathname) {
-  const segments = pathname.split("/").filter((segment) => segment); // 빈 문자열 제거
-  
-  return routeLabels[segments[segments.length - 1]]; // 마지막 세그먼트 반환
+function updateNavigation(path) {
+  return initNavigation.map((item) => ({
+    ...item,
+    current:
+      item.href === path ||
+      (path.startsWith("/collections/") && item.href === "/collections"),
+  }));
 }
-
 export default function Nav() {
   const location = useLocation();
-  const lastSegment = getLastPathSegment(location.pathname);
-  const [navigation, setNavigation] = useState(initialNavigation);
+  const [navigation, setNavigation] = useState(initNavigation);
+  const [currentPath, setCurrentPath] = useState("");
 
   useEffect(() => {
-    const updatedNavigation = navigation.map((item) => ({
-      ...item,
-      current: item.href === location.pathname.split("/").slice(0, 3).join("/") || item.href === location.pathname.split("/").slice(0, 3).join("/").replace(/\/$/, ''), // '/'가 있든 없든 같은지 확인
-    }));
-    setNavigation(updatedNavigation);
-  }, [location.pathname]);
+    const path = location.pathname;
 
-  const handleClick = (index) => {
-    const updatedNavigation = navigation.map((item, i) => ({
-      ...item,
-      current: i === index,
-    }));
-    setNavigation(updatedNavigation);
-  };
+    if (path.startsWith("/collections/")) {
+      setCurrentPath("단어 보기");
+    } else if (path === "/profile") {
+      setCurrentPath("마이페이지");
+    } else if (path === "/collections") {
+      setCurrentPath("단어장");
+    } else if (path === "/calendar") {
+      setCurrentPath("일정");
+    } else {
+      setCurrentPath("Main");
+    }
+
+    setNavigation(updateNavigation(path));
+  }, [location]);
+
   return (
     <>
       {/*
@@ -67,7 +64,7 @@ export default function Nav() {
         ```
       */}
       <div className="min-h-full">
-        <Disclosure as="nav" className="bg-my-hover-color">
+        <Disclosure as="nav" className="bg-green-300">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -84,18 +81,17 @@ export default function Nav() {
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item, index) => (
+                        {navigation.map((item) => (
                           <a
                             key={item.name}
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? "bg-gray-900 text-white"
-                                : "text-black decoration-white hover:bg-gray-700 hover:text-white",
+                                ? "bg-green-800 text-white"
+                                : "text-black no-underline hover:bg-green-500 ",
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                             aria-current={item.current ? "page" : undefined}
-                            onClick={() => handleClick(index)}
                           >
                             {item.name}
                           </a>
@@ -187,8 +183,8 @@ export default function Nav() {
                       href={item.href}
                       className={classNames(
                         item.current
-                          ? "bg-gray-900 text-white"
-                          : "text-black hover:bg-gray-700 hover:text-white",
+                          ? "bg-green-800 text-white"
+                          : "no-underline hover:bg-green-400 hover:text-white text-black",
                         "block rounded-md px-3 py-2 text-base font-medium"
                       )}
                       aria-current={item.current ? "page" : undefined}
@@ -229,7 +225,7 @@ export default function Nav() {
                         key={item.name}
                         as="a"
                         href={item.href}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-green-400 hover:text-white"
                       >
                         {item.name}
                       </Disclosure.Button>
@@ -244,7 +240,7 @@ export default function Nav() {
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              {lastSegment}
+              {currentPath}
             </h1>
           </div>
         </header>
