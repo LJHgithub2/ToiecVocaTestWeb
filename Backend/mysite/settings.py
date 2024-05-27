@@ -118,7 +118,18 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+AUTH_USER_MODEL = "voca.User"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 세션 만료 기간을 30분으로 설정 (1800초)
+SESSION_COOKIE_AGE = 1800  # 30 minutes, in seconds
+
+# 사용자가 요청할 때마다 세션을 저장하고 만료 시간을 연장합니다.
+SESSION_SAVE_EVERY_REQUEST = True
+
+# 브라우저 종료 시 세션이 만료되도록 설정
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
