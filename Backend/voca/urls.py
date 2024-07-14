@@ -1,13 +1,14 @@
 from django.urls import path
-from .views import index, login, register
+from .views import login, register, logout
 
 from . import views
 
 # 이름 공간 추가
 app_name="voca"
 urlpatterns = [
-    path("", index, name="index"),
+    path("", views.index, name="index"),
     path("login/", login, name="login"),
+    path("logout/", logout, name="login"),
     path("register/", register, name="register"),
     path('api/profile/<str:username>/', views.profile_view, name='profile_view'),
     # path('api/wordbooks/', views.wordbook_list_view, name='wordbook_list'),

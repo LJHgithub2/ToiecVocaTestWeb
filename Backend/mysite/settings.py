@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-33-y7nv(*q957g=o(5ty=!(+iklqc97la7xy#77h7(kqfau8-e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'voca.User'
 
