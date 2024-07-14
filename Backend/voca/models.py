@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class User(AbstractUser):
     def __str__(self):
@@ -39,22 +41,11 @@ class Vocabulary(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    chapter_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
-
-    def add_word(self, word):
-        self.words.add(word)
-
-    def remove_word(self, word):
-        self.words.remove(word)
-
-    def get_all_words(self):
-        return self.words.all()
-
-    def find_word(self, word):
-        return self.words.filter(word=word).first()
-
+    
     def get_vocabulary_info(self):
         return f"{self.name}: {self.description}"
     
@@ -63,13 +54,18 @@ class Vocabulary(models.Model):
         abstract = True  # 추상 모델로 설정
 
 class Word(models.Model):
-    wordbook = models.ForeignKey(Vocabulary, related_name='words', on_delete=models.CASCADE)
+    # 추상클래스의 상속객체중 하나를 참조
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    wordbook = GenericForeignKey('content_type', 'object_id')
+
     word = models.CharField(max_length=100, unique=True)
     mean = models.TextField()
+    chapter=models.IntegerField(default=0)
     part_of_speech = models.CharField(max_length=50)  # 품사
     synonyms = models.TextField(blank=True)
     antonyms = models.TextField(blank=True)
-    is_favorite= models.BooleanField(default=True)
+    is_favorite= models.BooleanField(default=False)
     correct_count=models.IntegerField(default=0)
     incorrect_count=models.IntegerField(default=0)
     last_attempt_incorrect=models.IntegerField(default=0)
@@ -145,6 +141,7 @@ class PublicVocabulary(Vocabulary):
 
 class PersonalVocabulary(Vocabulary):
     owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)
+    is_favorite= models.BooleanField(default=False)
 
     def get_personal_vocabulary_info(self):
         return f"{self.owner.username}: {self.description}"
