@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login, register, logout
+from .views import login, register, logout, auth_status
 
 from . import views
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path("login/", login, name="login"),
     path("logout/", logout, name="login"),
     path("register/", register, name="register"),
+    path("auth-status/",auth_status,name="auth_status"),
     path('api/profile/<str:username>/', views.profile_view, name='profile_view'),
     # path('api/wordbooks/', views.wordbook_list_view, name='wordbook_list'),
     # path('api/wordbook/<int:wordbook_id>/', views.wordbook_detail_view, name='wordbook_detail'),
