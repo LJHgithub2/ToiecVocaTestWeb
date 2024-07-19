@@ -32,6 +32,7 @@ AUTH_USER_MODEL = 'voca.User'
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     "voca.apps.VocaConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -49,6 +51,26 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'accept',
+    'origin',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # React 앱의 주소
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -132,3 +154,8 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # 브라우저 종료 시 세션이 만료되도록 설정
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True

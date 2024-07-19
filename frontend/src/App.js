@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // react-router-dom lib
 import { Routes, Route, Navigate } from 'react-router-dom';
 // context
-import { AuthContext, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 // custom
 import Login from './page/login';
 import Nav from './page/nav';
@@ -19,6 +19,7 @@ import Profile from './page/profile';
 import ItemList from './components/itemList';
 import Test from './test/test';
 import Calendar from './page/calendar';
+import Logout from './page/logout';
 
 const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
@@ -27,7 +28,6 @@ const AppRoutes = () => {
         <Routes>
             {isAuthenticated ? (
                 <>
-                    <Route path="*" element={<Navigate to="/" />} />
                     <Route path="/" exact element={<Nav />}>
                         <Route index element={<Main />} />
                         <Route
@@ -41,8 +41,10 @@ const AppRoutes = () => {
                         />
                         <Route path="profile" element={<Profile />} />
                         <Route path="calendar" element={<Calendar />} />
+                        <Route path="logout" exact element={<Logout />} />
                         <Route path="*" element={<Navigate to="/" />} />
                     </Route>
+                    <Route path="*" element={<Navigate to="/" />} />
                 </>
             ) : (
                 <>

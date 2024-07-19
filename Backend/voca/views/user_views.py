@@ -25,10 +25,17 @@ def user_detail(request, user_id):
 def login_required_json(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
+        print(request.COOKIES)
         if not request.user.is_authenticated:
             return JsonResponse({'isAuthenticated': False}, status=401)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+@require_GET
+@login_required_json
+def auth_status(request):
+    print(request.user)
+    return JsonResponse({'isAuthenticated': True}, status=200)
 
 @csrf_exempt
 @require_POST
@@ -73,11 +80,6 @@ def login(request):
         return JsonResponse({"userId": user.id}, status=200)
     else:
         return JsonResponse({"error": "Invalid credentials"}, status=400)
-    
-@require_GET
-@login_required_json
-def auth_status(request):
-    return JsonResponse({'isAuthenticated': True}, status=200)
 
 @csrf_exempt
 @login_required_json # 로그인 상태아니면 실패 json 반환
