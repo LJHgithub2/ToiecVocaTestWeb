@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const user = {
     name: 'jong',
@@ -32,6 +32,7 @@ function updateNavigation(path) {
 }
 export default function Nav() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [navigation, setNavigation] = useState(initNavigation);
     const [currentPath, setCurrentPath] = useState('');
 
@@ -82,9 +83,11 @@ export default function Nav() {
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
                                                 {navigation.map((item) => (
-                                                    <a
+                                                    <button
                                                         key={item.name}
-                                                        href={item.href}
+                                                        onClick={() =>
+                                                            navigate(item.href)
+                                                        }
                                                         className={classNames(
                                                             item.current
                                                                 ? 'bg-green-800 text-white'
@@ -98,7 +101,7 @@ export default function Nav() {
                                                         }
                                                     >
                                                         {item.name}
-                                                    </a>
+                                                    </button>
                                                 ))}
                                             </div>
                                         </div>
@@ -157,21 +160,23 @@ export default function Nav() {
                                                                     {({
                                                                         active,
                                                                     }) => (
-                                                                        <a
-                                                                            href={
-                                                                                item.href
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                navigate(
+                                                                                    item.href
+                                                                                )
                                                                             }
                                                                             className={classNames(
                                                                                 active
                                                                                     ? 'bg-gray-100'
                                                                                     : '',
-                                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                                                'block w-full px-4 py-2 text-sm text-gray-700'
                                                                             )}
                                                                         >
                                                                             {
                                                                                 item.name
                                                                             }
-                                                                        </a>
+                                                                        </button>
                                                                     )}
                                                                 </Menu.Item>
                                                             )
@@ -210,7 +215,7 @@ export default function Nav() {
                                         <Disclosure.Button
                                             key={item.name}
                                             as="a"
-                                            href={item.href}
+                                            onClick={() => navigate(item.href)}
                                             className={classNames(
                                                 item.current
                                                     ? 'bg-green-800 text-white'
@@ -263,7 +268,9 @@ export default function Nav() {
                                             <Disclosure.Button
                                                 key={item.name}
                                                 as="a"
-                                                href={item.href}
+                                                onClick={() =>
+                                                    navigate(item.href)
+                                                }
                                                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-green-400 hover:text-white"
                                             >
                                                 {item.name}

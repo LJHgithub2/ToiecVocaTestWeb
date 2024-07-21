@@ -7,19 +7,13 @@ from django.http import JsonResponse,HttpResponse, HttpResponseForbidden, HttpRe
 from functools import wraps
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.db import DatabaseError
 from django.views.decorators.http import require_POST,require_GET
 from ..models import (
     Profile,
     User,
 )
-
-def user_list(request):
-    # 사용자 리스트를 반환하는 뷰 로직
-    return HttpResponse("User List")
-
-def user_detail(request, user_id):
-    # 사용자 상세 정보를 반환하는 뷰 로직
-    return HttpResponse(f"User Detail for {user_id}")
+import time
 
 # 커스텀 로그인 확인함수(로그인이 아닐경우 json으로 실패 반환)
 def login_required_json(view_func):
@@ -27,7 +21,7 @@ def login_required_json(view_func):
     def _wrapped_view(request, *args, **kwargs):
         print(request.COOKIES)
         if not request.user.is_authenticated:
-            return JsonResponse({'isAuthenticated': False}, status=401)
+            return JsonResponse({'isAuthenticated': False}, status=202)
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
@@ -35,30 +29,33 @@ def login_required_json(view_func):
 @login_required_json
 def auth_status(request):
     print(request.user)
-    return JsonResponse({'isAuthenticated': True}, status=200)
+    return JsonResponse({'isAuthenticated': True}, status=201)
 
 @csrf_exempt
 @require_POST
 def register(request):
     data = json.loads(request.body)
-    username = data.get("username")
+    print(data)
+    first_name = data.get("firstName")
+    last_name = data.get("lastName")
+    username = data.get("ID")  # username is taken from ID field
     password = data.get("password")
+    bio = data.get("message")
 
-    if not username or not password:
+    if not first_name or not last_name or not username or not password:
         return JsonResponse({"error": "Missing required fields"}, status=400)
 
     if User.objects.filter(username=username).exists():
         return JsonResponse({"error": "Username already exists"}, status=400)
 
-    # 사용자 생성 및 프로필 연결
-    user = User.objects.create_user(username=username, password=password)
+    # 사용자 생성
+    user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
 
-    # 사용자가 생성될때 profile도 자동으로 등록
-    Profile.objects.create(user=user)
+    # 프로필 생성 및 연결
+    Profile.objects.create(user=user, bio=bio)
 
     # 응답으로 사용자 정보 전달
     return JsonResponse({"id": user.id, "username": user.username}, status=201)
-
 
 @csrf_exempt #crsf를 사용하지 않겠다.
 @require_POST
@@ -82,14 +79,33 @@ def login(request):
         return JsonResponse({"error": "Invalid credentials"}, status=400)
 
 @csrf_exempt
-@login_required_json # 로그인 상태아니면 실패 json 반환
+@login_required_json
 @require_POST
 def logout(request):
     try:
+        # 사용자 로그아웃
         auth_logout(request)
-        return JsonResponse({"result": "Logout success"}, status=200)
+
+        # 응답 생성 및 세션 쿠키 삭제
+        response = JsonResponse({"result": "Logout success"}, status=200)
+        
+        response.delete_cookie('sessionid')
+
+        # 세션 데이터 삭제
+        request.session.flush()
+
+        print("로그아웃 성공")
+        return response
+
+    except DatabaseError:
+        # 세션 저장 시 발생하는 DatabaseError 처리
+        print("세션 저장 중 오류 발생")
+        return JsonResponse({"result": "Logout failed", "error": "Session save error"}, status=500)
+
     except Exception as e:
+        # 기타 예외 처리
         return JsonResponse({"result": "Logout failed", "error": str(e)}, status=500)
+
     
 @login_required_json
 @require_GET

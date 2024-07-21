@@ -24,6 +24,15 @@ import Logout from './page/logout';
 const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
 
+    if (isAuthenticated === null) {
+        // 로딩 중일 때 표시할 컴포넌트
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                로딩중..
+            </div>
+        );
+    }
+
     return (
         <Routes>
             {isAuthenticated ? (

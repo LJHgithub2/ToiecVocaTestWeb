@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
+    const [username, setusername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
+            await login(username, password);
             navigate('/');
         } catch (error) {
             console.error('Login failed', error);
@@ -32,18 +32,17 @@ export default function Login() {
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                         <label
-                            htmlFor="email"
+                            htmlFor="username"
                             className="block text-sm font-medium leading-6 text-gray-900"
                         >
                             ID
                         </label>
                         <div className="mt-2">
                             <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                id="username"
+                                name="username"
+                                value={username}
+                                onChange={(e) => setusername(e.target.value)}
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
