@@ -2,23 +2,22 @@ import { Fragment, useState, useEffect } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import ProfileImage from '../components/profileImage'; // default import
 
-const user = {
-    name: 'jong',
-    email: 'jong@example.com',
-    imageUrl: '',
-};
 const initNavigation = [
     { name: 'Main', href: '/', current: false },
     { name: '단어장', href: '/collections', current: false },
     { name: '일정', href: '/calendar', current: false },
     { name: '마이페이지', href: '/profile', current: false },
 ];
+
 const userNavigation = [
     { name: 'Your Profile', href: '/profile' },
     { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '/logout' },
 ];
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
@@ -35,6 +34,7 @@ export default function Nav() {
     const navigate = useNavigate();
     const [navigation, setNavigation] = useState(initNavigation);
     const [currentPath, setCurrentPath] = useState('');
+    const { user } = useAuth();
 
     useEffect(() => {
         const path = location.pathname;
@@ -110,7 +110,7 @@ export default function Nav() {
                                         <div className="ml-4 flex items-center md:ml-6">
                                             <button
                                                 type="button"
-                                                className="relative rounded-full bg-gray-800 p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                                className="relative rounded-full bg-white p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                             >
                                                 <span className="absolute -inset-1.5" />
                                                 <span className="sr-only">
@@ -128,16 +128,12 @@ export default function Nav() {
                                                 className="relative ml-3"
                                             >
                                                 <div>
-                                                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                                    <Menu.Button className="relative flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                         <span className="absolute -inset-1.5" />
                                                         <span className="sr-only">
                                                             Open user menu
                                                         </span>
-                                                        <img
-                                                            className="h-8 w-8 rounded-full"
-                                                            src={user.imageUrl}
-                                                            alt=""
-                                                        />
+                                                        <ProfileImage></ProfileImage>
                                                     </Menu.Button>
                                                 </div>
                                                 <Transition
@@ -235,18 +231,19 @@ export default function Nav() {
                                 <div className="border-t border-gray-700 pb-3 pt-4">
                                     <div className="flex items-center px-5">
                                         <div className="flex-shrink-0">
-                                            <img
-                                                className="h-10 w-10 rounded-full"
-                                                src={user.imageUrl}
-                                                alt=""
-                                            />
+                                            <ProfileImage></ProfileImage>
                                         </div>
                                         <div className="ml-3">
                                             <div className="text-base font-medium leading-none text-white">
-                                                {user.name}
+                                                {user &&
+                                                user.lastname &&
+                                                user.firstname
+                                                    ? user.lastname +
+                                                      user.firstname
+                                                    : '익명'}
                                             </div>
                                             <div className="text-sm font-medium leading-none text-gray-400">
-                                                {user.email}
+                                                {user ? user.username : '익명'}
                                             </div>
                                         </div>
                                         <button

@@ -10,10 +10,29 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import DatabaseError
 from django.views.decorators.http import require_POST,require_GET
 from ..models import (
+    PersonalVocabulary,
     Profile,
     User,
 )
 import time
+
+def get_user_basic_info(curr_user, username):
+    user = get_object_or_404(User, username=username)
+    
+    if curr_user != user:
+        return None
+
+    profile = get_object_or_404(Profile, user=user)
+    
+    profile_data  = {
+        "username": profile.user.username,
+        "firstname": profile.user.first_name,
+        "lastname": profile.user.last_name,
+        "profile_image": profile.profile_image.url if profile.profile_image else None,
+    }
+    return profile_data
+
+
 
 # 커스텀 로그인 확인함수(로그인이 아닐경우 json으로 실패 반환)
 def login_required_json(view_func):
@@ -29,7 +48,8 @@ def login_required_json(view_func):
 @login_required_json
 def auth_status(request):
     print(request.user)
-    return JsonResponse({'isAuthenticated': True}, status=201)
+    user_info = get_user_basic_info(request.user, request.user.username)# json 반환
+    return JsonResponse({'isAuthenticated': True, 'user' : user_info}, status=201)
 
 @csrf_exempt
 @require_POST
@@ -55,7 +75,7 @@ def register(request):
     Profile.objects.create(user=user, bio=bio)
 
     # 응답으로 사용자 정보 전달
-    return JsonResponse({"id": user.id, "username": user.username}, status=201)
+    return JsonResponse({'username':user.username},status=201)
 
 @csrf_exempt #crsf를 사용하지 않겠다.
 @require_POST
@@ -68,15 +88,15 @@ def login(request):
         return JsonResponse({"error": "Missing required fields"}, status=400)
 
     user = authenticate(request, username=username, password=password)
-
     if user is not None:
         # 아래 코드 실행시 sessionid, csrftoken이 생성
         # sessionid는 사용자 세션과 관련된 상태 정보를 식별하기 위한 고유한 식별자입니다.
         # 이를 클라이언트(웹 브라우저)에 쿠키로 저장
         auth_login(request, user) 
-        return JsonResponse({"userId": user.id}, status=200)
+        user_info = get_user_basic_info(user, user.username)# json 반환
+        return JsonResponse({'isAuthenticated': True, 'user' : user_info}, status=200)
     else:
-        return JsonResponse({"error": "Invalid credentials"}, status=400)
+        return JsonResponse({"error": "회원이 아닙니다."}, status=400)
 
 @csrf_exempt
 @login_required_json
@@ -106,23 +126,37 @@ def logout(request):
         # 기타 예외 처리
         return JsonResponse({"result": "Logout failed", "error": str(e)}, status=500)
 
+
+def get_user_personal_vocabularies(user_id):
+    # 주어진 user_id에 해당하는 User 객체를 가져옵니다.
+    user = get_object_or_404(User, id=user_id)
+    
+    # 해당 User 객체가 가진 모든 PersonalVocabulary 객체를 가져옵니다.
+    personal_vocabularies = PersonalVocabulary.objects.filter(owner=user)
+    
+    return personal_vocabularies
     
 @login_required_json
 @require_GET
 def profile_view(request, username):
+    print(username)
     user = get_object_or_404(User, username=username)
     
     if request.user != user:
         return HttpResponseForbidden("You are not allowed to view this profile.")
 
     profile = get_object_or_404(Profile, user=user)
+
+    personal_vocabularies = PersonalVocabulary.objects.filter(owner=user)
+    print(personal_vocabularies)
     
     profile_data  = {
-        "username": profile.user.username,
-        "bio": profile.bio,
-        "date_of_birth": profile.date_of_birth,
-        "gender": profile.gender,
-        "location": profile.location,
         "profile_image": profile.profile_image.url if profile.profile_image else None,
+        "username": profile.user.username,
+        "firstname": profile.user.first_name,
+        "lastname": profile.user.last_name,
+        "job" : profile.job,
+        "gender" : profile.gender,
+        "myVocabulary" : personal_vocabularies,
     }
     return JsonResponse(profile_data, status=200)

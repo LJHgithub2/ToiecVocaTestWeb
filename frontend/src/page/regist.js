@@ -72,29 +72,10 @@ export default function Regist() {
                 <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                     <div>
                         <label
-                            htmlFor="firstName"
-                            className="block text-sm font-semibold leading-6 text-gray-900"
-                        >
-                            성
-                        </label>
-                        <div className="mt-2.5">
-                            <input
-                                type="text"
-                                name="firstName"
-                                id="firstName"
-                                autoComplete="given-name"
-                                value={formData.firstName}
-                                onChange={handleInputChange}
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label
                             htmlFor="lastName"
                             className="block text-sm font-semibold leading-6 text-gray-900"
                         >
-                            이름
+                            성
                         </label>
                         <div className="mt-2.5">
                             <input
@@ -103,6 +84,25 @@ export default function Regist() {
                                 id="lastName"
                                 autoComplete="family-name"
                                 value={formData.lastName}
+                                onChange={handleInputChange}
+                                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            htmlFor="firstName"
+                            className="block text-sm font-semibold leading-6 text-gray-900"
+                        >
+                            이름
+                        </label>
+                        <div className="mt-2.5">
+                            <input
+                                type="text"
+                                name="firstName"
+                                id="firstName"
+                                autoComplete="given-name"
+                                value={formData.firstName}
                                 onChange={handleInputChange}
                                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
@@ -222,19 +222,21 @@ export default function Regist() {
                     )}
                 </div>
             </form>
-            <style jsx>{`
-                button:disabled {
-                    background-color: #cccccc; /* 비활성화된 상태의 배경색 */
-                    color: #999999; /* 비활성화된 상태의 텍스트색 */
-                    cursor: not-allowed; /* 비활성화된 상태에서 커서 */
-                }
+            <style>
+                {`
+                    button:disabled {
+                        background-color: #cccccc; /* 비활성화된 상태의 배경색 */
+                        color: #999999; /* 비활성화된 상태의 텍스트색 */
+                        cursor: not-allowed; /* 비활성화된 상태에서 커서 */
+                    }
 
-                button:disabled:hover {
-                    /* 비활성화된 상태에서는 hover 효과가 없도록 지정 */
-                    background-color: #cccccc;
-                    color: #999999;
-                }
-            `}</style>
+                    button:disabled:hover {
+                        /* 비활성화된 상태에서는 hover 효과가 없도록 지정 */
+                        background-color: #cccccc;
+                        color: #999999;
+                    }
+                `}
+            </style>
         </div>
     );
 }
