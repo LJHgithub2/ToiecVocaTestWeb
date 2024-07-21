@@ -14,13 +14,16 @@ class Profile(models.Model):
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
+    job = models.CharField(max_length=20, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
 
-    def update_profile(self, bio=None, profile_image=None, location=None):
+    def update_profile(self, bio=None, job=None, profile_image=None, location=None):
         if bio is not None:
             self.bio = bio
         if profile_image is not None:
             self.profile_image = profile_image
+        if job is not None:
+            self.job = job
         if location is not None:
             self.location = location
         self.save()
