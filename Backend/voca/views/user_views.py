@@ -136,27 +136,3 @@ def get_user_personal_vocabularies(user_id):
     
     return personal_vocabularies
     
-@login_required_json
-@require_GET
-def profile_view(request, username):
-    print(username)
-    user = get_object_or_404(User, username=username)
-    
-    if request.user != user:
-        return HttpResponseForbidden("You are not allowed to view this profile.")
-
-    profile = get_object_or_404(Profile, user=user)
-
-    personal_vocabularies = PersonalVocabulary.objects.filter(owner=user)
-    print(personal_vocabularies)
-    
-    profile_data  = {
-        "profile_image": profile.profile_image.url if profile.profile_image else None,
-        "username": profile.user.username,
-        "firstname": profile.user.first_name,
-        "lastname": profile.user.last_name,
-        "job" : profile.job,
-        "gender" : profile.gender,
-        "myVocabulary" : personal_vocabularies,
-    }
-    return JsonResponse(profile_data, status=200)

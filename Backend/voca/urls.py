@@ -12,6 +12,7 @@ urlpatterns = [
     path("register/", register, name="register"),
     path("auth-status/",auth_status,name="auth_status"),
     path('api/profile/<str:username>/', views.profile_view, name='profile_view'),
+    path('api/profile/<str:username>/upload/', views.upload_profile_image, name='profile-image-upload'),
     # path('api/wordbooks/', views.wordbook_list_view, name='wordbook_list'),
     # path('api/wordbook/<int:wordbook_id>/', views.wordbook_detail_view, name='wordbook_detail'),
     # path('api/wordbook/<int:wordbook_id>/add_word/', views.add_word_to_wordbook, name='add_word_to_wordbook'),
