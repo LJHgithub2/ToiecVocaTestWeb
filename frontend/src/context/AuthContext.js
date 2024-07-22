@@ -2,6 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from '../config/axiosConfig';
 
+// 환경 변수에서 API URL 가져오기
+const API_URL = process.env.REACT_APP_API_URL;
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -16,6 +19,9 @@ export const AuthProvider = ({ children }) => {
                 const response = await axios.get('/auth-status/');
                 setIsAuthenticated(response.data.isAuthenticated);
                 if (response.data.isAuthenticated) {
+                    response.data.user.profile_image =
+                        API_URL + response.data.user.profile_image;
+                    console.log(response.data.user.profile_image);
                     setUser(response.data.user);
                 }
             } catch (error) {
@@ -42,6 +48,8 @@ export const AuthProvider = ({ children }) => {
                 password,
             });
             if (response.status === 200) {
+                response.data.user.profile_image =
+                    API_URL + response.data.user.profile_image;
                 setIsAuthenticated(true);
                 setUser(response.data.user);
             }
