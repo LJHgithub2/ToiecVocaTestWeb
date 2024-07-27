@@ -28,8 +28,6 @@ SECRET_KEY = "django-insecure-33-y7nv(*q957g=o(5ty=!(+iklqc97la7xy#77h7(kqfau8-e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
 AUTH_USER_MODEL = 'voca.User'
 
 # Application definition
@@ -56,11 +54,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 # 모든 오리진 다 cors 허용
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 # 정해진 오리진만 cors 허용
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:3000',  # React 앱의 주소
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # React 앱의 주소
+]
+
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -99,7 +99,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "mysite.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

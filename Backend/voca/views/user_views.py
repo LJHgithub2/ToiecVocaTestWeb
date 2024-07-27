@@ -38,10 +38,22 @@ def get_user_basic_info(curr_user, username):
 def login_required_json(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        print(request.COOKIES)
+        # 전송된 쿠키 출력 (디버깅 용도)
+        print("Received cookies:", request.COOKIES)
+
         if not request.user.is_authenticated:
-            return JsonResponse({'isAuthenticated': False}, status=202)
-        return view_func(request, *args, **kwargs)
+            return JsonResponse({'isAuthenticated': False}, status=401)  # 인증 실패 시 401 상태 코드
+        response = view_func(request, *args, **kwargs)
+        
+        # JSON 응답을 포함한 응답 처리
+        if isinstance(response, JsonResponse):
+            response_data = json.loads(response.content.decode('utf-8'))
+        else:
+            response_data = response
+            
+        response_data['isAuthenticated'] = True
+        
+        return JsonResponse(response_data, safe=False)
     return _wrapped_view
 
 @require_GET

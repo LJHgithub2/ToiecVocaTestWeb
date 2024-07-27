@@ -26,7 +26,6 @@ def get_profile_model(cur_user,username):
 @require_GET
 def profile_view(request, username):
     (user,profile) = get_profile_model(request.user, username)
-
     if not profile :
        return JsonResponse({'errors': "form.errors"}, status=400)
 
