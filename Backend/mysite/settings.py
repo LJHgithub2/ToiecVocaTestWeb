@@ -55,6 +55,13 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+# 모든 오리진 다 cors 허용
+CORS_ALLOW_ALL_ORIGINS = True
+# 정해진 오리진만 cors 허용
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000',  # React 앱의 주소
+# ]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'GET',
@@ -71,9 +78,6 @@ CORS_ALLOW_HEADERS = [
     'origin',
     'x-csrftoken',
     'x-requested-with',
-]
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',  # React 앱의 주소
 ]
 
 ROOT_URLCONF = "mysite.urls"
