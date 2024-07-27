@@ -1,5 +1,4 @@
 import json
-from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 # django를 api서버로 사용하기에 커스텀 login_required를 만들어 사용
 # from django.contrib.auth.decorators import login_required
@@ -9,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.db import DatabaseError
 from django.views.decorators.http import require_POST,require_GET
+from django.shortcuts import render
 from ..models import (
     PersonalVocabulary,
     Profile,
@@ -148,3 +148,6 @@ def get_user_personal_vocabularies(user_id):
     
     return personal_vocabularies
     
+
+def index(request):
+    return render(request, "voca/index.html")

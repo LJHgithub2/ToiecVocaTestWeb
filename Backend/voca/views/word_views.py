@@ -1,5 +1,5 @@
 
-from django.shortcuts import render, redirect
+
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -17,6 +17,3 @@ from ..models import (
 # word = Word.objects.create(content_type=content_type, object_id=vocab1.id, word="example", mean="example meaning")
 
 
-
-def index(request):
-    return render(request, "voca/index.html")

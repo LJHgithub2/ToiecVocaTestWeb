@@ -1,5 +1,4 @@
 
-from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -30,7 +29,7 @@ def profile_view(request, username):
        return JsonResponse({'errors': "form.errors"}, status=400)
 
     personal_vocabularies = PersonalVocabulary.objects.filter(owner=user).values('id', 'name', 'description', 'created_at', 'chapter_count')  # 필드 지정
-
+    print(profile.profile_image.url)
     profile_data  = {
         "profile_image": profile.profile_image.url if profile.profile_image else None,
         "username": profile.user.username,
