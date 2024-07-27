@@ -53,14 +53,16 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-# 모든 오리진 다 cors 허용
-# CORS_ALLOW_ALL_ORIGINS = True
-# 정해진 오리진만 cors 허용
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',  # React 앱의 주소
-]
 
 ALLOWED_HOSTS = ['*']
+
+# 모든 오리진 다 cors 허용
+CORS_ALLOW_ALL_ORIGINS = True
+# 정해진 오리진만 cors 허용
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000',  # React 앱의 주소
+#     'http://180.231.244.58:3000',  # React 앱의 주소
+# ]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -161,7 +163,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 # 브라우저 종료 시 세션이 만료되도록 설정
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
