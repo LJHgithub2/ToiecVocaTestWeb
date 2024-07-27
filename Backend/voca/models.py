@@ -45,6 +45,7 @@ class Vocabulary(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     chapter_count = models.IntegerField(default=0)
+    vocabulary_images = models.ImageField(upload_to='vocabulary_images/', blank=True, null=True)
 
     def __str__(self):
         return self.name

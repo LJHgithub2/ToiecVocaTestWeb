@@ -1,11 +1,11 @@
 
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.contenttypes.models import ContentType
+from .user_views import login_required_json
 from ..models import (
     Profile,
     User,
