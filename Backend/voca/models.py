@@ -67,7 +67,7 @@ class Vocabulary(models.Model):
 class Word(models.Model):
     vocabulary = models.ForeignKey(Vocabulary, on_delete=models.CASCADE)
     
-    word = models.CharField(max_length=100, unique=True)
+    word = models.CharField(max_length=100)
     mean = models.TextField()
     chapter = models.IntegerField(default=0)
     part_of_speech = models.CharField(max_length=50)  # 품사
@@ -81,6 +81,11 @@ class Word(models.Model):
     example_sentence = models.TextField(blank=True)
     related_words = models.ManyToManyField('self', related_name='related_to', blank=True, symmetrical=False)
     added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['vocabulary', 'word'], name='unique_word_in_vocabulary')
+        ]
 
     def __str__(self):
         return self.word
