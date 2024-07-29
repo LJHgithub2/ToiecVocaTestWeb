@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
 class User(AbstractUser):
     def __str__(self):
@@ -40,42 +38,48 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+
 class Vocabulary(models.Model):
+    TYPE_CHOICES = [
+        (0, 'Public Vocabulary'),
+        (1, 'Personal Vocabulary'),
+    ]
+    RANK_CHOICES = [
+        (1, "비법 단어장"),
+        (2, "인증 단어장"),
+        (3, "일반 단어장"),
+        (4, "인증되지 않은 단어장")
+    ]
     name = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     chapter_count = models.IntegerField(default=0)
     vocabulary_images = models.ImageField(upload_to='vocabulary_images/', blank=True, null=True)
+    type = models.CharField(max_length=30, choices=TYPE_CHOICES)
+    rank = models.IntegerField(null=True, blank=True)  # For PublicVocabulary only
+    owner = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    is_favorite = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
     
-    def get_vocabulary_info(self):
-        return f"{self.name}: {self.description}"
-    
-
-    class Meta:
-        abstract = True  # 추상 모델로 설정
 
 class Word(models.Model):
-    # 추상클래스의 상속객체중 하나를 참조
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    wordbook = GenericForeignKey('content_type', 'object_id')
-
+    vocabulary = models.ForeignKey(Vocabulary, on_delete=models.CASCADE)
+    
     word = models.CharField(max_length=100, unique=True)
     mean = models.TextField()
-    chapter=models.IntegerField(default=0)
+    chapter = models.IntegerField(default=0)
     part_of_speech = models.CharField(max_length=50)  # 품사
     synonyms = models.TextField(blank=True)
     antonyms = models.TextField(blank=True)
-    is_favorite= models.BooleanField(default=False)
-    correct_count=models.IntegerField(default=0)
-    incorrect_count=models.IntegerField(default=0)
-    last_attempt_incorrect=models.IntegerField(default=0)
-    memo= models.TextField(blank=True)
+    is_favorite = models.BooleanField(default=False)
+    correct_count = models.IntegerField(default=0)
+    incorrect_count = models.IntegerField(default=0)
+    last_attempt_incorrect = models.IntegerField(default=0)
+    memo = models.TextField(blank=True)
     example_sentence = models.TextField(blank=True)
-    related_words = models.ManyToManyField('self', related_name='related_to',blank=True, symmetrical=False)
+    related_words = models.ManyToManyField('self', related_name='related_to', blank=True, symmetrical=False)
     added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -126,26 +130,3 @@ class Word(models.Model):
     def find_related_words(self, word):
         return self.related_words.filter(word=word)
 
-class PublicVocabulary(Vocabulary):
-    RANK_CHOICES = [
-        (1, "비법 단어장"),
-        (2, "인증 단어장"),
-        (3, "일반 단어장"),
-        (4, "인증되지 않은 단어장")
-    ]
-    rank = models.IntegerField(choices=RANK_CHOICES)
-
-    def get_public_vocabulary_info(self):
-        return f"{self.name}: {self.description} (Rank: {self.rank})"
-
-    def update_rank(self, rank):
-        self.rank = rank
-        self.save()
-
-
-class PersonalVocabulary(Vocabulary):
-    owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)
-    is_favorite= models.BooleanField(default=False)
-
-    def get_personal_vocabulary_info(self):
-        return f"{self.owner.username}: {self.description}"

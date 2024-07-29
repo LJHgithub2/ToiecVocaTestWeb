@@ -1,12 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Profile, Word, PublicVocabulary, PersonalVocabulary
+from .models import User, Profile, Word, Vocabulary
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile)
 admin.site.register(Word)
-admin.site.register(PublicVocabulary)
-admin.site.register(PersonalVocabulary)
+admin.site.register(Vocabulary)
 
 
 # # 사용자 모델의 관리 클래스 정의
