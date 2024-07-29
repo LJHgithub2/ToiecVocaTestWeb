@@ -13,7 +13,9 @@ urlpatterns = [
     path("auth-status/",auth_status,name="auth_status"),
     path('api/profile/<str:username>/', views.profile_view, name='profile_view'),
     path('api/profile/<str:username>/upload/', views.upload_profile_image, name='profile-image-upload'),
-    path('api/vocab/', views.get_vocabularys, name='get_vocabularys'),
+
+    path('api/vocab/', views.get_public_vocabularys, name='get_public_vocabularys'),
+    path('api/vocab/add/', views.add_public_vocabularys, name='add_public_vocabularys'),
     # path('api/wordbook/<int:wordbook_id>/', views.wordbook_detail_view, name='wordbook_detail'),
     # path('api/wordbook/<int:wordbook_id>/add_word/', views.add_word_to_wordbook, name='add_word_to_wordbook'),
     # path('api/add_wordbook/', views.add_wordbook, name='add_wordbook'),

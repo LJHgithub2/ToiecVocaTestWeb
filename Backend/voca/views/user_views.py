@@ -10,7 +10,6 @@ from django.db import DatabaseError
 from django.views.decorators.http import require_POST,require_GET
 from django.shortcuts import render
 from ..models import (
-    PersonalVocabulary,
     Profile,
     User,
 )
@@ -67,7 +66,6 @@ def auth_status(request):
 @require_POST
 def register(request):
     data = json.loads(request.body)
-    print(data)
     first_name = data.get("firstName")
     last_name = data.get("lastName")
     username = data.get("ID")  # username is taken from ID field
@@ -84,7 +82,7 @@ def register(request):
     user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
 
     # 프로필 생성 및 연결
-    Profile.objects.create(user=user, bio=bio)
+    Profile.objects.create(user=user, bio=bio, profile_image=None)
 
     # 응답으로 사용자 정보 전달
     return JsonResponse({'username':user.username},status=201)

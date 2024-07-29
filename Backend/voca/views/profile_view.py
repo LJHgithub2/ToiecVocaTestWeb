@@ -7,7 +7,7 @@ from .user_views import login_required_json
 from ..models import (
     Profile,
     User,
-    PersonalVocabulary
+    Vocabulary
 )
 
 def get_profile_model(cur_user,username):
@@ -28,8 +28,8 @@ def profile_view(request, username):
     if not profile :
        return JsonResponse({'errors': "form.errors"}, status=400)
 
-    personal_vocabularies = PersonalVocabulary.objects.filter(owner=user).values('id', 'name', 'description', 'created_at', 'chapter_count')  # 필드 지정
-    print(profile.profile_image.url)
+    personal_vocabularies = Vocabulary.objects.filter(owner=user).values('id', 'name', 'description', 'created_at', 'chapter_count')  # 필드 지정
+
     profile_data  = {
         "profile_image": profile.profile_image.url if profile.profile_image else None,
         "username": profile.user.username,

@@ -11,6 +11,7 @@ export default function Profile() {
         const fetchProfile = async () => {
             try {
                 const data = await getProfile(user.username);
+                console.log(data);
                 if (data) {
                     setProfile(data);
                 } else {

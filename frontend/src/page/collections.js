@@ -2,19 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { getVocabularys } from '../services/vocabularyService';
 import { useAuth } from '../context/AuthContext';
-// const callouts = [
-//     {
-//         name: '노랭이 단어장',
-//         description: '해커스 단어장입니다.',
-//         imageSrc: '/image/collections/1.jpg',
-//         imageAlt: '단어장 이미지',
-//         href: '/collections/1',
-//     },
-// ];
+
+// 환경 변수에서 API URL 가져오기
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function Collections() {
     const navigate = useNavigate();
-    const { user, setIsAuthenticated } = useAuth();
+    const { setIsAuthenticated } = useAuth();
     const [vocab, setVocab] = useState([]);
 
     useEffect(() => {
@@ -55,8 +49,12 @@ export default function Collections() {
                                 <div key={item.name} className="">
                                     <div className="h-80 w-full hover:opacity-75 overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
                                         <img
-                                            src={item.vocabulary_images}
-                                            alt={item.vocabulary_images}
+                                            src={
+                                                API_URL + item.vocabulary_images
+                                            }
+                                            alt={
+                                                API_URL + item.vocabulary_images
+                                            }
                                             className="h-full w-full object-cover object-center"
                                         />
                                     </div>
@@ -74,7 +72,9 @@ export default function Collections() {
                                             type="button"
                                             className="text-pretty inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 w-auto sm:text-sm"
                                             onClick={() => {
-                                                navigate(item.name);
+                                                navigate(
+                                                    '/collections/' + item.id
+                                                );
                                             }}
                                         >
                                             단어장 보기
