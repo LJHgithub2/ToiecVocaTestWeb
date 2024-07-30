@@ -38,7 +38,7 @@ def get_public_vocabularys(request):
 @csrf_exempt
 @require_POST
 @login_required_json
-def add_public_vocabularys(request):
+def add_public_vocabulary(request):
     print(request.POST)
     # Check if the user has admin privileges
     if not request.user.is_staff and not request.user.is_superuser:
