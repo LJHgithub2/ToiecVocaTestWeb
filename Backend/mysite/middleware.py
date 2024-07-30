@@ -8,6 +8,7 @@ class PutParsingMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        
         if request.method == 'PUT' and request.content_type.startswith('multipart/form-data'):
             content_type, options = cgi.parse_header(request.META.get('CONTENT_TYPE', ''))
             if content_type == 'multipart/form-data':
@@ -19,6 +20,6 @@ class PutParsingMiddleware:
                 
                 # Populate request.FILES from _files
                 request.FILES.update(request._files)
+            print(request.PUT, request._files)
         response = self.get_response(request)
-        print(request.PUT, request._files)
         return response
