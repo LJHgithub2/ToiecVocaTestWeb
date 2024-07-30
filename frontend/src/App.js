@@ -44,10 +44,7 @@ const AppRoutes = () => {
                             exact="false"
                             element={<Collections />}
                         />
-                        <Route
-                            path="collections/:wordBookNum"
-                            element={<ItemList />}
-                        />
+                        <Route path="collections/:id" element={<ItemList />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="calendar" element={<Calendar />} />
                         <Route path="logout" exact element={<Logout />} />
