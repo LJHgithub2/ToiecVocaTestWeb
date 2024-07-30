@@ -6,6 +6,10 @@ from . import views
 # 이름 공간 추가
 app_name="voca"
 urlpatterns = [
+    # test endpoint
+    path('putapi/', views.putTestAPI), # 추가
+
+    # user endpoints
     path("login/", login, name="login"),  # 'views.' prefix 추가
     path("logout/", logout, name="logout"),  # name 수정
     path("register/", register, name="register"),
@@ -13,8 +17,7 @@ urlpatterns = [
 
     # Profile endpoints
     path('api/profile/<str:username>/', views.profile_view, name='profile_view'),
-    path('api/profile/<str:username>/upload/', views.upload_profile_image, name='profile_image_upload'),
-    path('api/profile/<str:username>/upload/', views.upload_profile_image, name='profile_image_upload'),
+    path('api/profile/<str:username>/image/', views.ProfileImageView.as_view(), name='profile_image'),
 
 
     # Vocabulary endpoints
