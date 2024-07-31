@@ -20,6 +20,7 @@ import ItemList from './components/itemList';
 import Test from './test/test';
 import Calendar from './page/calendar';
 import Logout from './page/logout';
+import AddWord from './page/addWord';
 
 const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
@@ -45,6 +46,10 @@ const AppRoutes = () => {
                             element={<Collections />}
                         />
                         <Route path="collections/:id" element={<ItemList />} />
+                        <Route
+                            path="collections/:id/addWord"
+                            element={<AddWord />}
+                        />
                         <Route path="profile" element={<Profile />} />
                         <Route path="calendar" element={<Calendar />} />
                         <Route path="logout" exact element={<Logout />} />
