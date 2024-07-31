@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import ItemNav from './itemNav.js';
 import { getPublicWords } from '../services/wordService';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 
 // const people = [
 //     {

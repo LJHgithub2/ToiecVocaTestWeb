@@ -2,7 +2,7 @@ import axios from '../config/axiosConfig';
 
 export const getProfile = async (username) => {
     try {
-        const response = await axios.get(`/api/profile/${username}`);
+        const response = await axios.get(`/api/profile/${username}/`);
         if (!response.data.isAuthenticated) return null;
         return response.data.profile;
     } catch (error) {
@@ -11,11 +11,11 @@ export const getProfile = async (username) => {
     }
 };
 
-// 이미지 업로드를 위한 함수
+// 프로필 이미지 업로드 함수
 export const uploadProfileImage = async (username, formData) => {
     try {
-        const response = axios.post(
-            `/api/profile/${username}/upload/`,
+        const response = axios.put(
+            `/api/profile/${username}/image/`,
             formData,
             {
                 headers: {
@@ -27,6 +27,17 @@ export const uploadProfileImage = async (username, formData) => {
         return response;
     } catch (error) {
         console.error('이미지 업로드 실패:', error);
+        throw error;
+    }
+};
+
+// 프로필 이미지 삭제 함수
+export const deleteProfileImage = async (username) => {
+    try {
+        const response = axios.delete(`/api/profile/${username}/image/`);
+        return response;
+    } catch (error) {
+        console.error('이미지 삭제 실패:', error);
         throw error;
     }
 };

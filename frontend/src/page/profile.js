@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getProfile, uploadProfileImage } from '../services/profileService';
+import {
+    getProfile,
+    uploadProfileImage,
+    deleteProfileImage,
+} from '../services/profileService';
 import { useAuth } from '../context/AuthContext';
 import ProfileImage from '../components/profileImage';
 
@@ -41,15 +45,18 @@ export default function Profile() {
                 await uploadProfileImage(user.username, formData);
                 window.location.reload();
             } catch (error) {
-                console.log('Failed to upload image.');
                 alert('이미지 변경에 실패하였습니다.');
             }
         }
     };
 
-    const handleImageDelete = () => {
-        console.log('이미지 삭제');
-        // setImage('');
+    const handleImageDelete = async (event) => {
+        try {
+            await deleteProfileImage(user.username);
+            window.location.reload();
+        } catch (error) {
+            alert('이미지 삭제에 실패하였습니다.');
+        }
     };
 
     if (!profile) {
