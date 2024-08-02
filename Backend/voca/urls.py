@@ -10,7 +10,7 @@ urlpatterns = [
     path('putapi/', views.putTestAPI), # 추가
 
     # user endpoints
-    path("login/", login, name="login"),  # 'views.' prefix 추가
+    path("login/", login, name="login"),
     path("logout/", logout, name="logout"),  # name 수정
     path("register/", register, name="register"),
     path("auth-status/", auth_status, name="auth_status"),

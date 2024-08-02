@@ -4,20 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ItemNav from './itemNav.js';
 import { getPublicWords } from '../services/wordService';
 import { useParams } from 'react-router-dom';
-
-// const people = [
-//     {
-//         word: 'apple',
-//         mean: 'asdfafsdsfasfasdfsfsdadfsdfasfsdfsadfㅇㄹ마ㅓ리ㅏㅁ니런아ㅓ린ㄹㄴㅇㄻㄹㄴㄹㄴㄹㄴㅇㄹ마ㅓ리ㅏㅁ니런아ㅓ린ㄹㄴㅇㄻㄹㄴㄹㄴㄹㄴsfsadfasfs',
-//         role: 'ㅇㄹ마ㅓ리ㅏㅁ니런아ㅓ린ㄹㄴㅇㄻㄹㄴㄹㄴㄹㄴㅁㄹㄴㅇ',
-//     },
-//     {
-//         word: 'applsade',
-//         mean: '사과',
-//         role: '명사',
-//         chapter: 1,
-//     },
-// ];
+import FormFloatingLabels from '../test/test.js';
 
 export default function ListItem() {
     const { id } = useParams();
@@ -49,6 +36,7 @@ export default function ListItem() {
     return (
         <>
             <ItemNav></ItemNav>
+            <FormFloatingLabels></FormFloatingLabels>
             <ul role="list" className="divide-y mb-0 divide-gray-100">
                 {words.map((word, index) => (
                     <Item word={word} index={index}></Item>

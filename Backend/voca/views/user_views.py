@@ -13,7 +13,6 @@ from ..models import (
     Profile,
     User,
 )
-import time
 
 def get_user_basic_info(curr_user, username):
     user = get_object_or_404(User, username=username)
@@ -93,6 +92,7 @@ def login(request):
     data = json.loads(request.body)
     username = data.get("username")
     password = data.get("password")
+    print(username,password)
 
     if not username or not password:
         return JsonResponse({"error": "Missing required fields"}, status=400)

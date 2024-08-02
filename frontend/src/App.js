@@ -17,7 +17,7 @@ import Regist from './page/regist';
 import Page404 from './page/page404';
 import Profile from './page/profile';
 import ItemList from './components/itemList';
-import Test from './test/test';
+import FormFloatingLabels from './test/test';
 import Calendar from './page/calendar';
 import Logout from './page/logout';
 import AddWord from './page/addWord';
@@ -48,7 +48,7 @@ const AppRoutes = () => {
                         <Route path="collections/:id" element={<ItemList />} />
                         <Route
                             path="collections/:id/addWord"
-                            element={<AddWord />}
+                            element={<FormFloatingLabels />}
                         />
                         <Route path="profile" element={<Profile />} />
                         <Route path="calendar" element={<Calendar />} />
@@ -64,7 +64,7 @@ const AppRoutes = () => {
                     <Route path="*" element={<Navigate to="/login" />} />
                 </>
             )}
-            <Route path="/test" exact element={<Test />} />
+            <Route path="/test" exact element={<FormFloatingLabels />} />
         </Routes>
     );
 };
