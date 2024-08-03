@@ -9,6 +9,7 @@ import FormFloatingLabels from '../test/test.js';
 export default function ListItem() {
     const { id } = useParams();
     const [words, setWords] = useState([]);
+    const [showAddWord, setShowAddWord] = useState(false);
 
     useEffect(() => {
         const fetchPublicWords = async () => {
@@ -35,8 +36,17 @@ export default function ListItem() {
 
     return (
         <>
-            <ItemNav></ItemNav>
-            <FormFloatingLabels></FormFloatingLabels>
+            <ItemNav
+                showAddWord={showAddWord}
+                setShowAddWord={setShowAddWord}
+            ></ItemNav>
+            <div
+                className={`transition-all duration-300 ease-in-out ${
+                    showAddWord ? 'animate-fadeIn' : 'animate-fadeOut hidden'
+                }`}
+            >
+                <FormFloatingLabels className="" />
+            </div>
             <ul role="list" className="divide-y mb-0 divide-gray-100">
                 {words.map((word, index) => (
                     <Item word={word} index={index}></Item>
