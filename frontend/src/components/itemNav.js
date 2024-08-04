@@ -5,6 +5,7 @@ const ItemNav = (props) => {
     var listNum = 5;
     var setShowAddWord = props.setShowAddWord;
     var showAddWord = props.showAddWord;
+
     return (
         <section className="container px-4 mb-3">
             <div className="sm:flex sm:items-center justify-between">

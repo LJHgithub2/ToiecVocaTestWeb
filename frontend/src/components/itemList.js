@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import Item from './Item.js';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ItemNav from './itemNav.js';
 import { getPublicWords } from '../services/wordService';
 import { useParams } from 'react-router-dom';
@@ -10,6 +10,7 @@ export default function ListItem() {
     const { id } = useParams();
     const [words, setWords] = useState([]);
     const [showAddWord, setShowAddWord] = useState(false);
+    const addWordRef = useRef(null);
 
     useEffect(() => {
         const fetchPublicWords = async () => {
@@ -31,6 +32,16 @@ export default function ListItem() {
     }, []);
 
     useEffect(() => {
+        if (showAddWord) {
+            console.log(showAddWord);
+            console.log(addWordRef);
+            setTimeout(() => {
+                addWordRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 100); // 100ms 딜레이 후 스크롤 이동
+        }
+    }, [showAddWord]);
+
+    useEffect(() => {
         console.log(words);
     }, [words]);
 
@@ -40,13 +51,8 @@ export default function ListItem() {
                 showAddWord={showAddWord}
                 setShowAddWord={setShowAddWord}
             ></ItemNav>
-            <div
-                className={`transition-all duration-300 ease-in-out ${
-                    showAddWord ? 'animate-fadeIn' : 'animate-fadeOut hidden'
-                }`}
-            >
-                <FormFloatingLabels className="" />
-            </div>
+            {showAddWord && <FormFloatingLabels ref={addWordRef} />}
+
             <ul role="list" className="divide-y mb-0 divide-gray-100">
                 {words.map((word, index) => (
                     <Item word={word} index={index}></Item>

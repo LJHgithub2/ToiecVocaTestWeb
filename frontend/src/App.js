@@ -18,6 +18,7 @@ import Page404 from './page/page404';
 import Profile from './page/profile';
 import ItemList from './components/itemList';
 import FormFloatingLabels from './test/test';
+import StyleWrapper from './test/test1';
 import Calendar from './page/calendar';
 import Logout from './page/logout';
 import AddWord from './page/addWord';
@@ -64,7 +65,7 @@ const AppRoutes = () => {
                     <Route path="*" element={<Navigate to="/login" />} />
                 </>
             )}
-            <Route path="/test" exact element={<FormFloatingLabels />} />
+            <Route path="/test" exact element={<StyleWrapper />} />
         </Routes>
     );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './test.css'; // 스타일 파일
 
-const FormFloatingLabels = () => {
+const FormFloatingLabels = React.forwardRef((props, ref) => {
     const [showError, setShowError] = useState(false);
 
     const toggleError = () => {
@@ -18,7 +18,11 @@ const FormFloatingLabels = () => {
     const handleChange = (e) => setInputValue(e.target.value);
 
     return (
-        <div className="container mx-auto px-6 py-8">
+        <div
+            ref={ref}
+            className="container mx-auto px-6 py-8 
+            transition transform duration-300 animate-fadeInUp"
+        >
             <div className="bg-white border-0 shadow-lg rounded-3xl p-6">
                 <h1 className="text-2xl font-bold mb-8">단어 추가</h1>
                 <form id="form" noValidate>
@@ -115,6 +119,6 @@ const FormFloatingLabels = () => {
             </div>
         </div>
     );
-};
+});
 
 export default FormFloatingLabels;
