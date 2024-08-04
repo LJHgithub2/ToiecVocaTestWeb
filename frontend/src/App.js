@@ -65,7 +65,7 @@ const AppRoutes = () => {
                     <Route path="*" element={<Navigate to="/login" />} />
                 </>
             )}
-            <Route path="/test" exact element={<StyleWrapper />} />
+            <Route path="/test" exact element={<AddWord />} />
         </Routes>
     );
 };
