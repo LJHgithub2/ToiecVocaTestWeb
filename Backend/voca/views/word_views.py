@@ -26,7 +26,6 @@ def get_all_word_from_public_vocab(request, vocab_id):
     
     # 각 Word 객체를 직렬화할 수 있는 형식으로 변환
     words_list = list(words.values('id', 'word', 'mean', 'chapter', 'part_of_speech', 'synonyms', 'antonyms', 'is_favorite', 'correct_count', 'incorrect_count', 'last_attempt_incorrect', 'memo', 'example_sentence', 'added_at'))
-    print(words_list)
     return JsonResponse({'words': words_list}, status=200)
 
 @csrf_exempt

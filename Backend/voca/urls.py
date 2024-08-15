@@ -16,7 +16,7 @@ urlpatterns = [
     path("auth-status/", auth_status, name="auth_status"),
 
     # Profile endpoints
-    path('api/profile/<str:username>/', views.profile_view, name='profile_view'),
+    path('api/profile/<str:username>/', views.ProfileView.as_view(), name='profile_view'),
     path('api/profile/<str:username>/image/', views.ProfileImageView.as_view(), name='profile_image'),
 
 

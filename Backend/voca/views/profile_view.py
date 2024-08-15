@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 from .user_views import login_required_json
 from django.utils.decorators import method_decorator
+import json
 from ..models import (
     Profile,
     User,
@@ -22,9 +23,36 @@ def get_profile_model(cur_user,username):
     return (user,profile) if profile and user else (None,None)
 
 
-@login_required_json
-@require_GET
-def profile_view(request, username):
+# dispatch는 모든 http 메소드를 지칭(ex) get,post,put...)
+@method_decorator(login_required_json, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class ProfileView(View):
+    def put(self, request, username):
+        # 프로필 이미지 업로드 로직
+        return update_profile_view(request,username)
+
+    def get(self, request, username):
+        # 프로필 이미지 삭제 로직
+        return get_profile_view(request,username)
+
+def update_profile_view(request, username):
+    (user,profile) = get_profile_model(request.user, username)
+    if not profile :
+       return JsonResponse({'errors': "프로필 권한이 없습니다."}, status=400)
+
+    data = json.loads(request.body)
+    gender = data.get("gender")
+    job = data.get("job")
+    bio = data.get("bio")
+
+    profile.bio = bio
+    profile.gender = gender
+    profile.job = job
+
+    profile.save()
+    return JsonResponse({},status=200)
+
+def get_profile_view(request, username):
     (user,profile) = get_profile_model(request.user, username)
     if not profile :
        return JsonResponse({'errors': "프로필 권한이 없습니다."}, status=400)
@@ -41,7 +69,7 @@ def profile_view(request, username):
         "bio" : profile.bio,
         "myVocabulary" : list(personal_vocabularies),
     }
-    # print(profile_data)
+    
     return JsonResponse({'profile':profile_data}, status=200)
 
 # dispatch는 모든 http 메소드를 지칭(ex) get,post,put...)

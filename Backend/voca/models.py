@@ -32,9 +32,6 @@ class Profile(models.Model):
             return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
         return None
 
-    def get_profile_summary(self):
-        return f"{self.user.username} - {self.bio[:30]}..." if self.bio else f"{self.user.username}"
-
     def __str__(self):
         return self.user.username
 
