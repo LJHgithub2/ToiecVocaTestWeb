@@ -53,9 +53,18 @@ class Vocabulary(models.Model):
     chapter_count = models.IntegerField(default=0)
     vocabulary_images = models.ImageField(upload_to='vocabulary_images/', blank=True, null=True)
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
-    rank = models.IntegerField(null=True, blank=True)  # For PublicVocabulary only
+    rank = models.IntegerField(null=True, blank=True, choices=RANK_CHOICES)  # For PublicVocabulary only
     owner = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     is_favorite = models.BooleanField(default=False)
+
+    class Meta:
+        # 낮은 버전용
+        # unique_together = ('name', 'type')
+
+        # Alternatively, for Django 2.2+ you can use UniqueConstraint
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'type'], name='unique_name_type')
+        ]
 
     def __str__(self):
         return self.name

@@ -14,7 +14,6 @@ from ..models import (
 @login_required_json
 @require_GET
 def get_all_word_from_public_vocab(request, vocab_id):
-    print("vocab_id",vocab_id)
     try:
         # Vocabulary 인스턴스 가져오기
         vocabulary = Vocabulary.objects.get(id=vocab_id)
@@ -37,10 +36,13 @@ def add_word_to_public_vocab(request, vocab_id):
         vocabulary = Vocabulary.objects.get(id=vocab_id)
     except Vocabulary.DoesNotExist:
         return JsonResponse({'error': 'Vocabulary not found'}, status=404)
+    print(request.user,vocabulary.owner)
     
     # Check if the user has admin privileges
     if not request.user.is_staff and not request.user.is_superuser or request.user != vocabulary.owner:
-        return JsonResponse({'errors': "접근이 거부되었습니다. 권한을 확인하세요."}, status=403)
+        response = JsonResponse({'error': "접근이 거부되었습니다. 권한을 확인하세요."}, status=403)
+        return response
+
 
     # 요청 본문에서 데이터 추출
     data = json.loads(request.body)
