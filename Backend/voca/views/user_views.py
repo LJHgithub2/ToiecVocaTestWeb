@@ -2,7 +2,7 @@ import json
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 # django를 api서버로 사용하기에 커스텀 login_required를 만들어 사용
 # from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse,HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import JsonResponse,HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseNotAllowed
 from functools import wraps
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -42,16 +42,23 @@ def login_required_json(view_func):
         if not request.user.is_authenticated:
             return JsonResponse({'isAuthenticated': False}, status=401)  # 인증 실패 시 401 상태 코드
         response = view_func(request, *args, **kwargs)
-        
+
         # JSON 응답을 포함한 응답 처리
         if isinstance(response, JsonResponse):
             response_data = json.loads(response.content.decode('utf-8'))
+            response_data['isAuthenticated'] = True
+            # 새로운 JsonResponse 생성, 원래 상태 코드를 유지
+            response = JsonResponse(response_data, status=response.status_code, safe=False)
+        elif isinstance(response, HttpResponseNotAllowed):
+            # Handle HttpResponseNotAllowed separately, or convert it to a JSON response if needed
+            response = JsonResponse({'error': 'Method not allowed', 'isAuthenticated': True}, status=405)
         else:
             response_data = response
-            
-        response_data['isAuthenticated'] = True
+            response_data['isAuthenticated'] = True
+            # 새로운 JsonResponse 생성, 기본 상태 코드 200 사용
+            response = JsonResponse(response_data, safe=False)
         
-        return JsonResponse(response_data, safe=False)
+        return response
     return _wrapped_view
 
 @require_GET
@@ -92,7 +99,6 @@ def login(request):
     data = json.loads(request.body)
     username = data.get("username")
     password = data.get("password")
-    print(username,password)
 
     if not username or not password:
         return JsonResponse({"error": "Missing required fields"}, status=400)
@@ -136,16 +142,6 @@ def logout(request):
         # 기타 예외 처리
         return JsonResponse({"result": "Logout failed", "error": str(e)}, status=500)
 
-
-def get_user_personal_vocabularies(user_id):
-    # 주어진 user_id에 해당하는 User 객체를 가져옵니다.
-    user = get_object_or_404(User, id=user_id)
-    
-    # 해당 User 객체가 가진 모든 PersonalVocabulary 객체를 가져옵니다.
-    personal_vocabularies = PersonalVocabulary.objects.filter(owner=user)
-    
-    return personal_vocabularies
-    
 
 def index(request):
     return render(request, "voca/index.html")
