@@ -1,17 +1,26 @@
-
+from django.views import View
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST, require_GET
+from django.utils.decorators import method_decorator
 from .user_views import login_required_json
 from ..models import (
     Vocabulary,
     User,
 )
 
-@csrf_exempt
-@login_required_json
-@require_GET
+# dispatch는 모든 http 메소드를 지칭(ex) get,post,put...)
+@method_decorator(login_required_json, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class PublicVocabularyView(View):
+    def get(self, request):
+        # 프로필 이미지 업로드 로직
+        return get_public_vocabularys(request)
+
+    def post(self, request):
+        # 프로필 이미지 삭제 로직
+        return add_public_vocabulary(request)
+
 def get_public_vocabularys(request):
     # Fetch all vocabulary entries
     vocabularies = Vocabulary.objects.filter(type=0).all()
@@ -35,11 +44,9 @@ def get_public_vocabularys(request):
     # Return as JSON
     return JsonResponse(vocab_data, status=200)
 
-@csrf_exempt
-@require_POST
-@login_required_json
+
 def add_public_vocabulary(request):
-    print(request.POST)
+
     # Check if the user has admin privileges
     if not request.user.is_staff and not request.user.is_superuser:
         return JsonResponse({'errors': "접근이 거부되었습니다. 관리자 권한이 필요합니다."}, status=403)
