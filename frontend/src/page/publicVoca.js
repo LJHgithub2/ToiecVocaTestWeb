@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 // 환경 변수에서 API URL 가져오기
 const API_URL = process.env.REACT_APP_API_URL;
 
-export default function Collections() {
+export default function PublicVoca() {
     const navigate = useNavigate();
     const { setIsAuthenticated } = useAuth();
     const [vocab, setVocab] = useState([]);
@@ -38,7 +38,7 @@ export default function Collections() {
             <div className="mx-auto max-w-7xl px-4 xs:px-6 lg:px-8">
                 <div className="mx-auto max-w-2xl py-5 lg:max-w-none">
                     <h2 className="text-2xl font-bold text-gray-900">
-                        단어장 목록
+                        공용 단어장 목록
                     </h2>
 
                     <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
@@ -60,11 +60,11 @@ export default function Collections() {
                                     </div>
                                     <div className="flex justify-between items-center gap-x-2">
                                         <div>
-                                            <h2 className="mt-6 text-sm text-gray-500">
+                                            <h2 className="mt-6 text-base font-semibold text-gray-900">
                                                 <span className="" />
                                                 {item.name}
                                             </h2>
-                                            <p className="text-base font-semibold text-gray-900">
+                                            <p className="text-sm text-gray-500">
                                                 {item.description}
                                             </p>
                                         </div>
@@ -73,7 +73,7 @@ export default function Collections() {
                                             className="text-pretty inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 w-auto sm:text-sm"
                                             onClick={() => {
                                                 navigate(
-                                                    '/collections/' + item.id
+                                                    '/publicVoca/' + item.id
                                                 );
                                             }}
                                         >

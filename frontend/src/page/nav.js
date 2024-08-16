@@ -7,14 +7,13 @@ import ProfileImage from '../components/profileImage'; // default import
 
 const initNavigation = [
     { name: 'Main', href: '/', current: false },
-    { name: '단어장', href: '/collections', current: false },
+    { name: '공용 단어장', href: '/publicVoca', current: false },
     { name: '일정', href: '/calendar', current: false },
     { name: '마이페이지', href: '/profile', current: false },
 ];
 
 const userNavigation = [
     { name: 'Your Profile', href: '/profile' },
-    { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '/logout' },
 ];
 
@@ -26,7 +25,7 @@ function updateNavigation(path) {
         ...item,
         current:
             item.href === path ||
-            (path.startsWith('/collections/') && item.href === '/collections'),
+            (path.startsWith('/publicVoca/') && item.href === '/publicVoca'),
     }));
 }
 export default function Nav() {
@@ -39,12 +38,12 @@ export default function Nav() {
     useEffect(() => {
         const path = location.pathname;
 
-        if (path.startsWith('/collections/')) {
+        if (path.startsWith('/publicVoca/')) {
             setCurrentPath('단어 보기');
+        } else if (path === '/publicVoca') {
+            setCurrentPath('공용 단어장');
         } else if (path === '/profile') {
             setCurrentPath('마이페이지');
-        } else if (path === '/collections') {
-            setCurrentPath('단어장');
         } else if (path === '/calendar') {
             setCurrentPath('일정');
         } else {

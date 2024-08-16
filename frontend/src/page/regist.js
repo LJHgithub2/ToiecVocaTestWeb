@@ -151,7 +151,7 @@ export default function Regist() {
                             htmlFor="message"
                             className="block text-sm font-semibold leading-6 text-gray-900"
                         >
-                            가입 메시지
+                            자기소개
                         </label>
                         <div className="mt-2.5">
                             <textarea
