@@ -4,12 +4,15 @@ import React, { useEffect, useState, useRef } from 'react';
 import ItemNav from './itemNav.js';
 import { getPublicWords } from '../services/wordService';
 import { useParams } from 'react-router-dom';
-import FormFloatingLabels from '../test/test.js';
+import FormFloatingLabels from '../components/addWord';
 
 export default function ListItem() {
     const { id } = useParams();
     const [words, setWords] = useState([]);
+    const [selectedWords, setSelectedWords] = useState([]);
+    const [trigger, setTrigger] = useState(false);
     const [showAddWord, setShowAddWord] = useState(false);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
     const addWordRef = useRef(null);
 
     useEffect(() => {
@@ -19,43 +22,70 @@ export default function ListItem() {
                 if (data) {
                     setWords(data);
                 } else {
-                    // 인증실패
                     console.log('단어가 없습니다.');
                     setWords([]);
                 }
             } catch (error) {
                 console.log('Failed to fetch profile data.');
-                // setIsAuthenticated(false);
             }
         };
         fetchPublicWords();
-    }, []);
+    }, [trigger]);
 
     useEffect(() => {
         if (showAddWord) {
-            console.log(showAddWord);
-            console.log(addWordRef);
             setTimeout(() => {
                 addWordRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }, 100); // 100ms 딜레이 후 스크롤 이동
+            }, 100);
         }
     }, [showAddWord]);
 
-    useEffect(() => {
-        console.log(words);
-    }, [words]);
+    const handleWordSelect = (word, checked) => {
+        if (!isSelectionMode) return;
+        setSelectedWords((prevSelected) => {
+            if (checked) {
+                return [...prevSelected, word];
+            } else {
+                return prevSelected.filter((w) => w !== word);
+            }
+        });
+    };
+
+    const toggleSelectionMode = () => {
+        setIsSelectionMode(!isSelectionMode);
+        if (isSelectionMode) {
+            setSelectedWords([]); // 선택 모드를 끌 때 선택된 단어들 초기화
+        }
+    };
 
     return (
         <>
             <ItemNav
                 showAddWord={showAddWord}
                 setShowAddWord={setShowAddWord}
-            ></ItemNav>
-            {showAddWord && <FormFloatingLabels ref={addWordRef} />}
+                isSelectionMode={isSelectionMode}
+                toggleSelectionMode={toggleSelectionMode}
+                selectedWordsCount={selectedWords.length}
+            />
+            {showAddWord && (
+                <FormFloatingLabels
+                    ref={addWordRef}
+                    trigger={trigger}
+                    setTrigger={setTrigger}
+                    setShowAddWord={setShowAddWord}
+                />
+            )}
 
-            <ul role="list" className="divide-y mb-0 divide-gray-100">
+            <ul role="list" className="divide-y mb-0 divide-gray-100 pl-0">
                 {words.map((word, index) => (
-                    <Item word={word} index={index}></Item>
+                    <Item
+                        key={word.word}
+                        word={word}
+                        index={index}
+                        isSelectionMode={isSelectionMode}
+                        isSelected={selectedWords.includes(word)}
+                        onSelect={(checked) => handleWordSelect(word, checked)}
+                    />
                 ))}
             </ul>
 

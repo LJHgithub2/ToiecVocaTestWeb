@@ -3,8 +3,7 @@ import CounterBtn from './button/counterBtn';
 import DetailView from './detailView';
 import React, { useState, useRef, useEffect } from 'react';
 
-function Item(props) {
-    var word = props.word;
+function Item({ word, index, isSelectionMode, isSelected, onSelect }) {
     const [isOpen, setIsOpen] = useState(false);
     const [maxHeight, setMaxHeight] = useState('0px');
     const [isSpeakerIcon, setIsSpeakerIcon] = useState(true);
@@ -17,6 +16,7 @@ function Item(props) {
     const toggleAccordion = () => {
         setIsOpen(!isOpen);
     };
+
     useEffect(() => {
         if (isOpen) {
             setMaxHeight(`${contentRef.current.scrollHeight}px`);
@@ -24,12 +24,13 @@ function Item(props) {
             setMaxHeight('0px');
         }
     }, [isOpen]);
+
     return (
         <li key={word.word} className="py-2">
             <div
-                className={`flex justify-between px-3 pb-2 items-center transition duration-300 ease-in-out ${
+                className={`flex justify-between  min-h-[100px] px-3 py-2 items-center transition duration-300 ease-in-out ${
                     isOpen ? 'bg-gray-100' : ''
-                }`}
+                } ${isSelected ? '!bg-blue-100' : ''}`}
             >
                 <div>
                     <div className="flex min-w-0 gap-x-4">
@@ -38,7 +39,14 @@ function Item(props) {
                                 <p className="text-3xl font-semibold leading-6 text-gray-900">
                                     {word.word}
                                 </p>
-                                <span className="px-3 py-0.5 text-xs text-blue-600 bg-blue-100 rounded-full">
+                                <span
+                                    className={`px-3 py-0.5 text-xs rounded-full text-blue-600
+                                    ${
+                                        isSelected
+                                            ? 'bg-yellow-100'
+                                            : 'bg-blue-100'
+                                    }`}
+                                >
                                     {word.chapter} chapter
                                 </span>
                             </div>
@@ -83,8 +91,23 @@ function Item(props) {
                         </div>
                     )}
                     <div className="flex flex-col">
-                        <CheckBox id={word.word}></CheckBox>
-                        <CounterBtn></CounterBtn>
+                        {!isSelectionMode ? (
+                            <>
+                                <CheckBox id={word.word} />
+                                <CounterBtn />
+                            </>
+                        ) : (
+                            <div className="h-full content-center my-1">
+                                <input
+                                    type="checkbox"
+                                    className="h-8 w-8 content-center bg-gray-200 rounded-lg border-2 border-gray-400 focus:ring-4 focus:ring-blue-300 checked:bg-blue-500 checked:border-transparent transition-all duration-200 ease-in-out cursor-pointer"
+                                    id={word.word}
+                                    onChange={(event) =>
+                                        onSelect(event.target.checked)
+                                    }
+                                />
+                            </div>
+                        )}
                     </div>
                     <div className="flex items-center">
                         <button
@@ -118,10 +141,7 @@ function Item(props) {
                     className="transition-max-height duration-1000 overflow-hidden ease-in-out bg-white p-4 border shadow-md"
                     style={{ maxHeight }}
                 >
-                    <DetailView
-                        className="transition-all"
-                        word={word}
-                    ></DetailView>
+                    <DetailView word={word} />
                 </div>
             )}
         </li>

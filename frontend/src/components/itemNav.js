@@ -1,10 +1,14 @@
 import React from 'react';
 
-const ItemNav = (props) => {
+const ItemNav = ({
+    showAddWord,
+    setShowAddWord,
+    isSelectionMode,
+    toggleSelectionMode,
+    selectedWordsCount,
+}) => {
     var listName = '종현';
     var listNum = 5;
-    var setShowAddWord = props.setShowAddWord;
-    var showAddWord = props.showAddWord;
 
     return (
         <section className="container px-4 mb-3">
@@ -21,19 +25,32 @@ const ItemNav = (props) => {
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-300"></p>
                 </div>
                 <div className="flex items-center mt-4 gap-x-3 ">
-                    <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
+                    <button
+                        onClick={toggleSelectionMode}
+                        className={`flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide transition-colors duration-200 rounded-lg shrink-0 sm:w-auto gap-x-2
+                            ${
+                                isSelectionMode
+                                    ? 'bg-gray-400 text-black ring-2 ring-gray-500'
+                                    : 'text-gray-700 bg-white border hover:bg-gray-100'
+                            }
+                        `}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="20"
                             height="20"
                             fill="currentColor"
-                            class="bi bi-check-circle"
+                            className="bi bi-check-circle"
                             viewBox="0 0 16 16"
                         >
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
                             <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
                         </svg>
-                        <span>단어 선택</span>
+                        <span>
+                            {isSelectionMode
+                                ? `${selectedWordsCount}개 선택됨`
+                                : '단어 선택'}
+                        </span>
                     </button>
                     <button
                         onClick={() => {
