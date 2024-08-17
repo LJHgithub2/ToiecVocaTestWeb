@@ -1,5 +1,17 @@
 import axios from '../config/axiosConfig';
 
+export const updateProfile = async (username, formData) => {
+    try {
+        const response = await axios.put(`/api/profile/${username}/`, formData);
+        if (!response.data.isAuthenticated || response.status !== 200)
+            return null;
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching profile data:', error);
+        throw error;
+    }
+};
+
 export const getProfile = async (username) => {
     try {
         const response = await axios.get(`/api/profile/${username}/`);
