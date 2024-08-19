@@ -110,6 +110,7 @@ def login(request):
         # 이를 클라이언트(웹 브라우저)에 쿠키로 저장
         auth_login(request, user) 
         user_info = get_user_basic_info(user, user.username)# json 반환
+        print(user_info)
         return JsonResponse({'isAuthenticated': True, 'user' : user_info}, status=200)
     else:
         return JsonResponse({"error": "회원이 아닙니다."}, status=400)

@@ -21,9 +21,9 @@ urlpatterns = [
 
 
     # Vocabulary endpoints
-    path('api/vocabularies/public/', views.PublicVocabularyView.as_view(), name='PublicVocabularyView'),  # 동일한 엔드포인트를 사용하지만, 메서드로 구분
-    path('api/vocabularies/public/<int:vocab_id>/', views.get_all_word_from_public_vocab, name='get_all_word_from_public_vocab'),  # 명사형으로 변경
-    path('api/vocabularies/public/<int:vocab_id>/words/', views.add_word_to_public_vocab, name='add_word_to_public_vocab'),
+    path('api/vocabularies/public/', views.PublicVocabularyView.as_view(), name='VocabularyListCreateView'),
+    path('api/vocabularies/public/<int:vocab_id>/', views.PublicVocabularyView.as_view(), name='PublicVocabularyDetailView'),
+    path('api/vocabularies/public/<int:vocab_id>/words/', views.VocabularyWordView.as_view(), name='VocabularyWordView'),
     # path('api/add_wordbook/', views.add_wordbook, name='add_wordbook'),
     # path('api/add_user_word/', views.add_user_word, name='add_user_word'),
     # path('api/add_wordbooks_with_words/', views.add_wordbooks_with_words, name='add_wordbooks_with_words'),

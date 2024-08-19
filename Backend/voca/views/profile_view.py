@@ -121,7 +121,6 @@ def delete_profile_image(request, username):
     # 모델 필드를 null로 설정
     profile.profile_image = None
 
-    print(profile.profile_image)
     # 모델 인스턴스 저장하기
     profile.save()
 
