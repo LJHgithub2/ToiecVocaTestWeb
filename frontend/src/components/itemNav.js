@@ -6,9 +6,11 @@ const ItemNav = ({
     isSelectionMode,
     toggleSelectionMode,
     selectedWordsCount,
+    vocaName,
+    wordsCount,
 }) => {
-    var listName = '종현';
-    var listNum = 5;
+    var listName = vocaName;
+    var listNum = wordsCount;
 
     return (
         <section className="container px-4 mb-3">
@@ -16,7 +18,7 @@ const ItemNav = ({
                 <div>
                     <div className="flex-col items-center gap-x-3">
                         <h2 className="text-lg font-medium text-gray-800 dark:text-white">
-                            {listName}단어장
+                            {listName}
                         </h2>
                         <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
                             {listNum}개
@@ -46,7 +48,7 @@ const ItemNav = ({
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
                             <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
                         </svg>
-                        <span>
+                        <span className="keep-all">
                             {isSelectionMode
                                 ? `${selectedWordsCount}개 선택됨`
                                 : '단어 선택'}
@@ -80,10 +82,11 @@ const ItemNav = ({
                                 d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        <span>단어 추가</span>
+                        <span className="keep-all">단어 추가</span>
                     </button>
                 </div>
             </div>
+
             <div className="mt-6 md:flex md:items-center md:justify-between">
                 <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
                     <button className="px-3 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">

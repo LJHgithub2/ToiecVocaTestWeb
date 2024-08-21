@@ -3,7 +3,7 @@ import Item from './Item.js';
 import React, { useEffect, useState, useRef } from 'react';
 import ItemNav from './itemNav.js';
 import { getPublicWords } from '../services/wordService';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import FormFloatingLabels from '../components/addWord';
 
 export default function ListItem() {
@@ -13,7 +13,12 @@ export default function ListItem() {
     const [trigger, setTrigger] = useState(false);
     const [showAddWord, setShowAddWord] = useState(false);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [wordsCount, setWordsCount] = useState(0);
     const addWordRef = useRef(null);
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const vocaName = queryParams.get('name');
 
     useEffect(() => {
         const fetchPublicWords = async () => {
@@ -21,6 +26,7 @@ export default function ListItem() {
                 const data = await getPublicWords(id);
                 if (data) {
                     setWords(data);
+                    console.log(data);
                 } else {
                     console.log('단어가 없습니다.');
                     setWords([]);
@@ -31,6 +37,10 @@ export default function ListItem() {
         };
         fetchPublicWords();
     }, [trigger]);
+
+    useEffect(() => {
+        setWordsCount(words.length);
+    }, [words]);
 
     useEffect(() => {
         if (showAddWord) {
@@ -66,6 +76,8 @@ export default function ListItem() {
                 isSelectionMode={isSelectionMode}
                 toggleSelectionMode={toggleSelectionMode}
                 selectedWordsCount={selectedWords.length}
+                vocaName={vocaName}
+                wordsCount={wordsCount}
             />
             {showAddWord && (
                 <FormFloatingLabels
