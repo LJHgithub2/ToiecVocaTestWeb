@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
                 if (response.data.isAuthenticated) {
                     response.data.user.profile_image =
                         API_URL + response.data.user.profile_image;
-                    console.log(response.data.user.profile_image);
                     setUser(response.data.user);
                 }
             } catch (error) {
@@ -38,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     }, [isAuthenticated]); // isAuthenticated가 변경될 때마다 이 효과가 실행됩니다.
     useEffect(() => {
         console.log('회원 상태가 변경되었습니다');
-        console.log(user);
+        // console.log(user.username);
     }, [user]); // isAuthenticated가 변경될 때마다 이 효과가 실행됩니다.
 
     const login = async (username, password) => {

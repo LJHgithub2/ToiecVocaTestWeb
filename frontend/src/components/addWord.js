@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './addWord.css'; // 스타일 파일
-import { getPublicWords, addWord } from '../services/wordService';
+import { addWord } from '../services/wordService';
 import { useParams } from 'react-router-dom';
 
 const FormFloatingLabels = React.forwardRef((props, ref) => {
