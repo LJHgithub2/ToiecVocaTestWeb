@@ -3,7 +3,7 @@ import axios from '../config/axiosConfig';
 export const getPublicWords = async (vocab_id) => {
     try {
         const response = await axios.get(
-            `/api/vocabularies/public/${vocab_id}/`
+            `/api/vocabularies/public/${vocab_id}/words/`
         );
         // console.log(response.data.words);
         if (!response.data.isAuthenticated) return null;
