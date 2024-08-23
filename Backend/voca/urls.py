@@ -27,4 +27,7 @@ urlpatterns = [
     # path('api/add_wordbook/', views.add_wordbook, name='add_wordbook'),
     # path('api/add_user_word/', views.add_user_word, name='add_user_word'),
     # path('api/add_wordbooks_with_words/', views.add_wordbooks_with_words, name='add_wordbooks_with_words'),
+
+    # Google TTS endpoint
+    path('api/openai-tts/', views.tts, name='openai_tts'),  # 추가
 ]
