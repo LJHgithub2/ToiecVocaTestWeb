@@ -16,10 +16,11 @@ import Main from './page/main';
 import Regist from './page/regist';
 import Page404 from './page/page404';
 import Profile from './page/profile';
-import ItemList from './components/itemList';
+import ItemList from './page/ItemList';
 import Test from './test/test';
 import Calendar from './page/calendar';
 import Logout from './page/logout';
+import { WordProvider } from './context/WordContext';
 
 const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
@@ -44,7 +45,14 @@ const AppRoutes = () => {
                             exact="false"
                             element={<PublicVoca />}
                         />
-                        <Route path="publicVoca/:id" element={<ItemList />} />
+                        <Route
+                            path="publicVoca/:id"
+                            element={
+                                <WordProvider>
+                                    <ItemList />
+                                </WordProvider>
+                            }
+                        />
                         <Route path="profile" element={<Profile />} />
                         <Route path="calendar" element={<Calendar />} />
                         <Route path="logout" exact element={<Logout />} />
