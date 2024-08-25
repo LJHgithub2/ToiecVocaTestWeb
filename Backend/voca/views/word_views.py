@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST,require_GET
 from django.utils.decorators import method_decorator
 from .user_views import login_required_json
+from django.forms.models import model_to_dict
 import json
 from ..models import (
     Vocabulary,
@@ -75,5 +76,7 @@ def add_word_to_public_vocab(request, vocab_id):
         memo=data.get('memo', ''),
         example_sentence=data.get('example_sentence', '')
     )
+    word_dict = model_to_dict(word, fields=['id', 'word', 'mean', 'chapter', 'part_of_speech', 'synonyms', 'antonyms', 'is_favorite', 'correct_count', 'incorrect_count', 'last_attempt_incorrect', 'memo', 'example_sentence', 'added_at'])
 
-    return JsonResponse({'message': 'Word added successfully', 'word': {'id': word.id}}, status=201)
+
+    return JsonResponse({'message': 'Word added successfully', 'word': word_dict}, status=201)
