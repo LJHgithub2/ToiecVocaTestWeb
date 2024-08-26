@@ -1,13 +1,9 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
 export default function DetailView({ word }) {
     const [value, setValue] = useState(3); // Initialize state with default value
-
-    useEffect(() => {
-        console.log(value);
-    }, [value]);
 
     return (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -22,7 +18,7 @@ export default function DetailView({ word }) {
                         <dt className="text-sm font-medium text-gray-500">
                             단어
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
                             {word.word}
                         </dd>
                     </div>
@@ -30,7 +26,7 @@ export default function DetailView({ word }) {
                         <dt className="text-sm font-medium text-gray-500">
                             뜻
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
                             {word.mean}
                         </dd>
                     </div>
@@ -38,7 +34,7 @@ export default function DetailView({ word }) {
                         <dt className="text-sm font-medium text-gray-500">
                             품사
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
                             {word.part_of_speech}
                         </dd>
                     </div>
@@ -46,7 +42,7 @@ export default function DetailView({ word }) {
                         <dt className="text-sm font-medium text-gray-500">
                             예문
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
                             {word.example_sentence || '-'}
                         </dd>
                     </div>
@@ -54,7 +50,7 @@ export default function DetailView({ word }) {
                         <dt className="text-sm font-medium text-gray-500">
                             메모
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
                             {word.memo || '-'}
                         </dd>
                     </div>
