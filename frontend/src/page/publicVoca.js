@@ -149,7 +149,7 @@ export default function PublicVoca() {
                     {vocab.map((item) => (
                         <div
                             key={item.id}
-                            className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-xl"
+                            className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-xl"
                         >
                             <div className="relative">
                                 <img
@@ -186,7 +186,7 @@ export default function PublicVoca() {
                                     </svg>
                                 </button>
                             </div>
-                            <div className="p-4">
+                            <div className="p-4 flex-1 flex flex-col justify-between">
                                 <div className="flex justify-between items-center mb-4">
                                     <h2 className="text-xl font-semibold text-gray-900 mb-2">
                                         {item.name}

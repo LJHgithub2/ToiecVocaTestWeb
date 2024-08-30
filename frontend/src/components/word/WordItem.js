@@ -94,89 +94,93 @@ const WordItem = ({ word, isSelectionMode, isMemorizationMode }) => {
     return (
         <li key={word.word} className="py-2 w-full">
             <div
-                className={`flex justify-between px-3 py-2 items-center transition duration-300 ease-in-out rounded-lg hover:shadow-md 
-        ${
-            isDarkening
-                ? '!bg-cyan-50'
-                : selectedWords.includes(word)
-                ? 'bg-blue-100'
-                : isOpen
-                ? 'bg-gray-100'
-                : ''
-        } 
-        ${isDarkening ? 'transition-all duration-[1000ms]' : ''}`}
+                className={`transition duration-300 ease-in-out rounded-lg
+                ${
+                    isDarkening
+                        ? '!bg-cyan-50'
+                        : selectedWords.includes(word)
+                        ? 'bg-blue-100'
+                        : isOpen
+                        ? 'bg-gray-100'
+                        : ''
+                } 
+                ${isDarkening ? 'transition-all duration-[1000ms]' : ''}`}
                 onMouseDown={handleTouchOrMouse}
                 onMouseUp={handleTouchOrMouse}
                 onMouseLeave={handleTouchOrMouse}
                 onTouchStart={handleTouchOrMouse}
                 onTouchEnd={handleTouchOrMouse}
             >
-                <div className="flex  w-[40%] items-center space-x-4">
-                    <div className="min-w-0">
-                        <div className="flex gap-x-3 items-center">
-                            <p className="text-2xl font-semibold text-gray-900 line-clamp-2 break-words whitespace-normal">
-                                {word.word}
-                            </p>
-                            <span
-                                className={`px-2 py-1 text-xs rounded-full ${
-                                    selectedWords.includes(word)
-                                        ? 'bg-yellow-100 text-yellow-800'
-                                        : 'bg-blue-100 text-blue-800'
-                                }`}
-                            >
-                                {word.chapter} chapter
-                            </span>
-                        </div>
-                        <p className="text-base text-gray-800 font-medium mt-1 line-clamp-2 break-words whitespace-normal">
-                            {myMemorizationMode ? '****' : word.mean}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1 italic">
-                            {myMemorizationMode ? '****' : word.part_of_speech}
-                        </p>
-                    </div>
+                <div className="flex gap-x-3 items-center px-3 pt-2 justify-between">
+                    <p className="text-2xl font-semibold text-gray-900 line-clamp-2 break-words whitespace-normal">
+                        {word.word}
+                    </p>
+                    <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                            selectedWords.includes(word)
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-blue-100 text-blue-800'
+                        }`}
+                    >
+                        {word.chapter} chapter
+                    </span>
                 </div>
-                <div className="flex items-center justify-end space-x-2 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md">
-                    <AudioPlayer word={word.word} dataAllow="true" />
-                    <FavoriteButton
-                        isFavorite={word.isFavorite || false}
-                        wordName={word.word}
-                        dataAllow="true"
-                    />
-
-                    {!isSelectionMode ? (
-                        <div className="hidden sm:block" data-allow="true">
-                            <CounterBtn />
+                <div className={`flex justify-between px-3 pb-2 items-center`}>
+                    <div className="flex  w-[40%] items-center space-x-4">
+                        <div className="min-w-0">
+                            <p className="text-base text-gray-800 font-medium mt-1 line-clamp-2 break-words whitespace-normal">
+                                {myMemorizationMode ? '****' : word.mean}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1 italic">
+                                {myMemorizationMode
+                                    ? '****'
+                                    : word.part_of_speech}
+                            </p>
                         </div>
-                    ) : (
-                        <SelectionCheckbox
-                            isSelected={selectedWords.includes(word)}
-                            onChange={handleSelect}
+                    </div>
+                    <div className="flex items-center justify-end space-x-2 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md">
+                        <AudioPlayer word={word.word} dataAllow="true" />
+                        <FavoriteButton
+                            isFavorite={word.isFavorite || false}
+                            wordName={word.word}
                             dataAllow="true"
                         />
-                    )}
 
-                    <button
-                        className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200"
-                        onClick={toggleAccordion}
-                        data-allow="true"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            className={`w-5 h-5 text-gray-600 dark:text-gray-300 transition duration-300 ease-in-out ${
-                                isOpen ? 'transform rotate-180' : ''
-                            }`}
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                        {!isSelectionMode ? (
+                            <div className="hidden sm:block" data-allow="true">
+                                <CounterBtn />
+                            </div>
+                        ) : (
+                            <SelectionCheckbox
+                                isSelected={selectedWords.includes(word)}
+                                onChange={handleSelect}
+                                dataAllow="true"
                             />
-                        </svg>
-                    </button>
+                        )}
+
+                        <button
+                            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200"
+                            onClick={toggleAccordion}
+                            data-allow="true"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                className={`w-5 h-5 text-gray-600 dark:text-gray-300 transition duration-300 ease-in-out ${
+                                    isOpen ? 'transform rotate-180' : ''
+                                }`}
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                                />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             {isOpen && (
