@@ -51,8 +51,9 @@ class Vocabulary(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     chapter_count = models.IntegerField(default=0)
+    word_count = models.IntegerField(default=0)  # 카운터 필드 추가
     vocabulary_images = models.ImageField(upload_to='vocabulary_images/', blank=True, null=True)
-    type = models.CharField(max_length=30, choices=TYPE_CHOICES)
+    type = models.IntegerField(choices=TYPE_CHOICES)
     rank = models.IntegerField(null=True, blank=True, choices=RANK_CHOICES)  # For PublicVocabulary only
     owner = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     is_favorite = models.BooleanField(default=False)
@@ -62,6 +63,8 @@ class Vocabulary(models.Model):
         # unique_together = ('name', 'type')
 
         # Alternatively, for Django 2.2+ you can use UniqueConstraint
+
+        # 최신버전 문법
         constraints = [
             models.UniqueConstraint(fields=['name', 'type'], name='unique_name_type')
         ]
@@ -95,49 +98,11 @@ class Word(models.Model):
 
     def __str__(self):
         return self.word
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # 부모 클래스의 save 호출
+        # 추가 로직이 필요한 경우 여기에 추가
 
-    def get_word_info(self):
-        return f"{self.word} ({self.part_of_speech}): {self.mean}"
-
-    def update_mean(self, mean):
-        self.mean = mean
-        self.save()
-
-    def add_synonym(self, synonym):
-        if self.synonyms:
-            self.synonyms += f", {synonym}"
-        else:
-            self.synonyms = synonym
-        self.save()
-
-    def remove_synonym(self, synonym):
-        synonyms_list = self.synonyms.split(", ")
-        if synonym in synonyms_list:
-            synonyms_list.remove(synonym)
-            self.synonyms = ", ".join(synonyms_list)
-            self.save()
-
-    def add_antonym(self, antonym):
-        if self.antonyms:
-            self.antonyms += f", {antonym}"
-        else:
-            self.antonyms = antonym
-        self.save()
-
-    def remove_antonym(self, antonym):
-        antonyms_list = self.antonyms.split(", ")
-        if antonym in antonyms_list:
-            antonyms_list.remove(antonym)
-            self.antonyms = ", ".join(antonyms_list)
-            self.save()
-
-    def add_example_sentence(self, example_sentence):
-        if self.example_sentence:
-            self.example_sentence += f"\n{example_sentence}"
-        else:
-            self.example_sentence = example_sentence
-        self.save()
-
-    def find_related_words(self, word):
-        return self.related_words.filter(word=word)
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)  # 부모 클래스의 delete 호출
 
