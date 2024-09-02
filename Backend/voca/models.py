@@ -95,6 +95,9 @@ class Word(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['vocabulary', 'word'], name='unique_word_in_vocabulary')
         ]
+        indexes = [
+            models.Index(fields=['id']),  # id 필드에 인덱스 추가
+        ]
 
     def __str__(self):
         return self.word

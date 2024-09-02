@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/vocabularies/public/', views.PublicVocabularyView.as_view(), name='VocabularyListCreateView'),
     path('api/vocabularies/public/<int:vocab_id>/', views.PublicVocabularyView.as_view(), name='PublicVocabularyDetailView'),
     path('api/vocabularies/public/<int:vocab_id>/words/', views.VocabularyWordView.as_view(), name='VocabularyWordView'),
+    path('api/vocabularies/public/<int:vocab_id>/words/range', views.get_words_by_range, name='get_words_by_range'),
     # path('api/add_wordbook/', views.add_wordbook, name='add_wordbook'),
     # path('api/add_user_word/', views.add_user_word, name='add_user_word'),
     # path('api/add_wordbooks_with_words/', views.add_wordbooks_with_words, name='add_wordbooks_with_words'),

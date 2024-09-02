@@ -6,6 +6,15 @@ module.exports = {
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
+            animation: {
+                'loading-progress': 'loading 1.5s ease-in-out infinite',
+            },
+            keyframes: {
+                loading: {
+                    '0%': { width: '0%' },
+                    '100%': { width: '100%' },
+                },
+            },
             colors: {
                 primary: '#11f511',
                 secondary: '#144e96',
