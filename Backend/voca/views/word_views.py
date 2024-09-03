@@ -39,19 +39,24 @@ def get_all_word_from_public_vocab(request, vocab_id):
     words_list = list(words.values('id', 'word', 'mean', 'chapter', 'part_of_speech', 'synonyms', 'antonyms', 'is_favorite', 'correct_count', 'incorrect_count', 'last_attempt_incorrect', 'memo', 'example_sentence', 'added_at'))
     return JsonResponse({'words': words_list}, status=200)
 
+@csrf_exempt
+@login_required_json
+@require_GET
 def get_words_by_range(request, vocab_id):
     # 쿼리 파라미터에서 startIndex와 endIndex 값을 가져옴
-    start_index = int(request.GET.get('page', 0))*20
+    start_index = (int(request.GET.get('page', 1))-1)*20
 
     # vocabulary_id에 해당하는 Vocabulary 객체를 가져옴
     vocabulary = get_object_or_404(Vocabulary, id=vocab_id)
+    print(start_index,start_index+20)
 
     # Word 객체를 startIndex와 endIndex 범위로 필터링
     words = Word.objects.filter(vocabulary=vocabulary).order_by('id')[start_index:start_index+20]
 
     # JSON 응답으로 반환할 데이터 형식 지정
     words_list = list(words.values('id', 'word', 'mean', 'chapter', 'part_of_speech', 'synonyms', 'antonyms', 'is_favorite', 'correct_count', 'incorrect_count', 'last_attempt_incorrect', 'memo', 'example_sentence', 'added_at'))
-    return JsonResponse(words_list, safe=False)
+    
+    return JsonResponse({'words': words_list}, status=200)
 
 def add_word_to_public_vocab(request, vocab_id):
     # Vocabulary 인스턴스 가져오기

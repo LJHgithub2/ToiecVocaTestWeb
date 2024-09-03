@@ -3,10 +3,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .user_views import login_required_json
 from pathlib import Path
 import os
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.conf import settings
 from openai import OpenAI
-import base64
+from django.urls import reverse
 
 api_key = os.getenv('GPT_API_KEY')
 organization = os.getenv('ORG_ID')
@@ -32,12 +32,8 @@ def tts(request):
     file_path = media_dir / file_name
 
     try:
-        # 파일이 이미 존재하는지 확인
-        if file_path.exists():
-            # 파일이 존재하면 기존 파일 읽기
-            with open(file_path, 'rb') as f:
-                audio_data = f.read()
-        else:
+        # 파일이 존재하지 않으면 생성
+        if not file_path.exists():
             # OpenAI TTS 요청
             response = client.audio.speech.create(
                 model="tts-1",
@@ -46,20 +42,16 @@ def tts(request):
             )
 
             # 응답에서 오디오 콘텐츠 추출 및 파일 저장
-            audio_data = b''
-            for chunk in response.iter_bytes():
-                audio_data += chunk
-
             with open(file_path, 'wb') as f:
-                f.write(audio_data)
+                for chunk in response.iter_bytes():
+                    f.write(chunk)
 
-        # 오디오 데이터를 Base64로 인코딩
-        audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+        # 파일의 URL 생성
+        file_url = request.build_absolute_uri(settings.MEDIA_URL + f'tts_audio/{file_name}')
 
         # JSON 응답 반환
         return JsonResponse({
-            'audio': audio_base64,
-            'content_type': 'audio/mpeg',
+            'audio_url': file_url,
             'filename': file_name
         })
 
