@@ -8,6 +8,8 @@ export const useWordContext = () => useContext(WordContext);
 
 export const WordProvider = ({ children }) => {
     const { id } = useParams();
+    const [wordCount, setWordCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [words, setWords] = useState([]);
     const [selectedWords, setSelectedWords] = useState([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -31,22 +33,33 @@ export const WordProvider = ({ children }) => {
         }
     };
 
+    const fetchWords = async (id, page) => {
+        setIsLoading(true);
+        try {
+            const data = await getPublicWords(id, page);
+            if (data) {
+                setWords(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch words:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchWords(id, currentPage);
+    }, [currentPage]);
+
     useEffect(() => {
         const name = queryParams.get('name');
-        setVocaName(name || '무제');
-
-        const fetchWords = async () => {
-            setIsLoading(true);
-            try {
-                const data = await getPublicWords(id);
-                setWords(data);
-            } catch (error) {
-                console.error('Failed to fetch words:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchWords();
+        const word_count = queryParams.get('word_count', null);
+        if (word_count == null) {
+            alert('잘못된 접근입니다.');
+        }
+        setVocaName(name || '새로고침을 해주세요');
+        setWordCount(word_count);
+        setCurrentPage(1);
     }, [location.search]);
 
     const value = {
@@ -63,6 +76,10 @@ export const WordProvider = ({ children }) => {
         updateWord,
         showAddWord,
         setShowAddWord,
+        wordCount,
+        setWordCount,
+        currentPage,
+        setCurrentPage,
     };
 
     return (

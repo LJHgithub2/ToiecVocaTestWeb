@@ -33,9 +33,7 @@ const WordList = () => {
                 <AddWord ref={addWordRef} setShowAddWord={setShowAddWord} />
             )}
             {isLoading ? (
-                <div>
-                    <Loading message="단어"></Loading>
-                </div>
+                <div>{/* <Loading message="단어"></Loading> */}</div>
             ) : (
                 <ul className="divide-y divide-gray-100 p-0 sm:p-3 md:p-6">
                     {words.map((word) => (
