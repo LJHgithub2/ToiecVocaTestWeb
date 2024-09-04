@@ -116,13 +116,13 @@ const WordItem = ({ word, isSelectionMode, isMemorizationMode }) => {
                         {word.word}
                     </p>
                     <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-2 py-1 text-xs rounded-full  no-select ${
                             selectedWords.includes(word)
                                 ? 'bg-yellow-100 text-yellow-800'
                                 : 'bg-blue-100 text-blue-800'
                         }`}
                     >
-                        {word.chapter} chapter
+                        {myMemorizationMode ? '-' : word.chapter} chapter
                     </span>
                 </div>
                 <div className={`flex justify-between px-3 pb-2 items-center`}>

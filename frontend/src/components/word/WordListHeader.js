@@ -4,7 +4,6 @@ import { useWordContext } from '../../context/WordContext';
 
 const WordListHeader = () => {
     const {
-        words,
         isSelectionMode,
         setIsSelectionMode,
         isMemorizationMode,
@@ -14,6 +13,7 @@ const WordListHeader = () => {
         showAddWord,
         setShowAddWord,
         setSelectedWords,
+        wordCount,
     } = useWordContext();
     const toggleSelectionMode = () => {
         if (!isSelectionMode) {
@@ -33,7 +33,7 @@ const WordListHeader = () => {
                             {vocaName}
                         </h2>
                         <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-                            {words.length}개
+                            {wordCount}개
                         </span>
                     </div>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-300"></p>

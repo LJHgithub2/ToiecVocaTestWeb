@@ -26,6 +26,7 @@ export default function PublicVoca() {
         name: '',
         description: '',
         vocab_image: '',
+        word_count: 0,
         rank: '',
     });
     const [imagePreview, setImagePreview] = useState(null);
@@ -46,6 +47,10 @@ export default function PublicVoca() {
         };
         fetchVocabularys();
     }, []);
+
+    useEffect(() => {
+        console.log(vocab);
+    }, [vocab]);
 
     const handleAddVocabulary = async () => {
         try {
@@ -210,7 +215,9 @@ export default function PublicVoca() {
                                                     item.id
                                                 }?name=${encodeURIComponent(
                                                     item.name
-                                                )}`
+                                                )}&word_count=${
+                                                    item.word_count
+                                                }`
                                             )
                                         }
                                     >
