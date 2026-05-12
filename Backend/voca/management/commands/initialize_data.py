@@ -1,5 +1,6 @@
 # myapp/management/commands/initialize_data.py
-# python manage.py initialize_data 를 통한 실행
+# 도커환경 docker compose exec backend python manage.py initialize_data
+# 일반 python manage.py initialize_data 를 통한 실행
 
 import pandas as pd
 from django.core.management.base import BaseCommand

@@ -8,13 +8,7 @@ from django.conf import settings
 from openai import OpenAI
 from django.urls import reverse
 
-api_key = os.getenv('GPT_API_KEY')
-organization = os.getenv('ORG_ID')
-
-client = OpenAI(
-    organization=organization,
-    api_key=api_key
-)
+client = OpenAI(api_key=os.getenv('GPT_API_KEY'))
 
 @csrf_exempt
 @require_http_methods(["POST"])

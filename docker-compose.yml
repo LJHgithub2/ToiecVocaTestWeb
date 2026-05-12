@@ -1,0 +1,28 @@
+# docker compose up -d --build
+
+services:
+  backend:
+    build: ./Backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend:/app
+      - media_files:/app/media
+    env_file:
+      - ./Backend/.env
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - PORT=3001
+    depends_on:
+      - backend
+
+volumes:
+  media_files:
