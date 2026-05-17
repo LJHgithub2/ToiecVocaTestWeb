@@ -7,6 +7,8 @@ import SelectionCheckbox from './SelectionCheckbox';
 import AudioPlayer from './AudioPlayer';
 import CounterBtn from './counterBtn';
 
+const HOLD_DURATION = 900;
+
 const WordItem = ({ word, isSelectionMode, isMemorizationMode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { selectedWords, setSelectedWords } = useWordContext();
@@ -14,26 +16,42 @@ const WordItem = ({ word, isSelectionMode, isMemorizationMode }) => {
 
     const [myMemorizationMode, setMyMemorizationMode] = useState(isMemorizationMode);
     const [isRevealing, setIsRevealing] = useState(false);
+    const [holdProgress, setHoldProgress] = useState(0);
     const isHeld = useRef(false);
-    const timerId = useRef(null);
+    const rafId = useRef(null);
 
     const isSelected = selectedWords.some((w) => w.id === word.id);
 
     const startHold = () => {
         isHeld.current = true;
         setIsRevealing(true);
-        timerId.current = setTimeout(() => {
-            if (isHeld.current) setMyMemorizationMode(false);
-        }, 900);
+        setHoldProgress(0);
+
+        const startTime = Date.now();
+
+        const tick = () => {
+            if (!isHeld.current) return;
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min((elapsed / HOLD_DURATION) * 100, 100);
+            setHoldProgress(progress);
+            if (progress < 100) {
+                rafId.current = requestAnimationFrame(tick);
+            } else {
+                setMyMemorizationMode(false);
+            }
+        };
+
+        rafId.current = requestAnimationFrame(tick);
     };
 
     const endHold = () => {
         isHeld.current = false;
         setIsRevealing(false);
+        setHoldProgress(0);
         setMyMemorizationMode(true);
-        if (timerId.current) {
-            clearTimeout(timerId.current);
-            timerId.current = null;
+        if (rafId.current) {
+            cancelAnimationFrame(rafId.current);
+            rafId.current = null;
         }
     };
 
@@ -95,7 +113,7 @@ const WordItem = ({ word, isSelectionMode, isMemorizationMode }) => {
                         <p className={`text-sm mt-0.5 font-medium transition-all duration-300 ${
                             myMemorizationMode ? 'text-transparent bg-slate-200 rounded select-none' : 'text-slate-600'
                         }`}>
-                            {myMemorizationMode ? '████████' : word.mean}
+                            {word.mean}
                         </p>
                         {!myMemorizationMode && word.part_of_speech && (
                             <p className="text-xs text-slate-400 italic mt-0.5">{word.part_of_speech}</p>
@@ -131,6 +149,16 @@ const WordItem = ({ word, isSelectionMode, isMemorizationMode }) => {
                         </button>
                     </div>
                 </div>
+
+                {/* Hold progress bar */}
+                {isRevealing && (
+                    <div className="h-1 w-full bg-slate-200 rounded-b-2xl overflow-hidden">
+                        <div
+                            className="h-full bg-indigo-500"
+                            style={{ width: `${holdProgress}%` }}
+                        />
+                    </div>
+                )}
 
                 {/* Accordion details */}
                 {isOpen && (

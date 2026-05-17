@@ -7,7 +7,7 @@ import AddWord from '../components/word/AddWord.js';
 import Loading from '../components/loading.js';
 
 const WordList = () => {
-    const { words, isSelectionMode, isMemorizationMode, showAddWord, setShowAddWord, isLoading } = useWordContext();
+    const { displayWords, isSelectionMode, isMemorizationMode, showAddWord, setShowAddWord, isLoading, isFilterActive } = useWordContext();
     const addWordRef = useRef(null);
 
     useEffect(() => {
@@ -28,15 +28,17 @@ const WordList = () => {
 
             {isLoading ? (
                 <Loading message="단어" />
-            ) : words.length === 0 ? (
+            ) : displayWords.length === 0 ? (
                 <div className="text-center py-16">
                     <div className="text-4xl mb-3">📝</div>
                     <p className="text-slate-500 font-medium">단어가 없습니다</p>
-                    <p className="text-sm text-slate-400 mt-1">단어 추가 버튼으로 첫 단어를 등록하세요</p>
+                    <p className="text-sm text-slate-400 mt-1">
+                        {isFilterActive ? '필터 조건에 맞는 단어가 없습니다' : '단어 추가 버튼으로 첫 단어를 등록하세요'}
+                    </p>
                 </div>
             ) : (
                 <ul className="space-y-1.5 p-0 list-none">
-                    {words.map((word) => (
+                    {displayWords.map((word) => (
                         <WordItem
                             key={word.id}
                             word={word}
@@ -47,7 +49,7 @@ const WordList = () => {
                 </ul>
             )}
 
-            <Pagination />
+            {!isFilterActive && <Pagination />}
         </div>
     );
 };

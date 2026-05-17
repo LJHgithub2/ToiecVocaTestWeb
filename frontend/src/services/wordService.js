@@ -1,5 +1,16 @@
 import axios from '../config/axiosConfig';
 
+export const getAllPublicWords = async (vocab_id) => {
+    try {
+        const response = await axios.get(`/api/vocabularies/public/${vocab_id}/words/`);
+        if (!response.data.isAuthenticated) return null;
+        return response.data.words;
+    } catch (error) {
+        console.error('Error fetching all words:', error);
+        throw error;
+    }
+};
+
 export const getPublicWords = async (vocab_id, page) => {
     try {
         console.log(vocab_id, page);
