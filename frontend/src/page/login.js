@@ -5,88 +5,106 @@ import { useNavigate } from 'react-router-dom';
 export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
-    const [username, setusername] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
         try {
             await login(username, password);
             navigate('/');
-        } catch (error) {
-            console.error('Login failed', error);
+        } catch (err) {
+            setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img
-                    className="mx-auto object-cover w-24"
-                    src="/image/logo.PNG"
-                    alt="logo"
-                />
-            </div>
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-sm animate-fade-in-up">
+                {/* Logo */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg mb-4">
+                        <span className="text-white font-bold text-2xl">J</span>
+                    </div>
+                    <h1 className="text-2xl font-bold text-slate-900">로그인</h1>
+                    <p className="text-sm text-slate-500 mt-1">JVT로 TOEIC 단어를 학습하세요</p>
+                </div>
 
-            <div className="mt-20 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div>
-                        <label
-                            htmlFor="username"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                            ID
-                        </label>
-                        <div className="mt-2">
+                {/* Form card */}
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                            <label
+                                htmlFor="username"
+                                className="block text-sm font-medium text-slate-700 mb-1.5"
+                            >
+                                아이디
+                            </label>
                             <input
                                 id="username"
                                 name="username"
+                                type="text"
+                                required
+                                autoComplete="username"
                                 value={username}
-                                onChange={(e) => setusername(e.target.value)}
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="아이디를 입력하세요"
+                                className="block w-full rounded-lg border-slate-200 px-3.5 py-2.5 text-slate-900 text-sm placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
                             />
                         </div>
-                    </div>
 
-                    <div>
-                        <div className="flex items-center justify-between">
+                        <div>
                             <label
                                 htmlFor="password"
-                                className="block text-sm font-medium leading-6 text-gray-900"
+                                className="block text-sm font-medium text-slate-700 mb-1.5"
                             >
-                                Password
+                                비밀번호
                             </label>
-                        </div>
-                        <div className="mt-2">
                             <input
                                 id="password"
                                 name="password"
                                 type="password"
+                                required
+                                autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                autoComplete="current-password"
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                placeholder="비밀번호를 입력하세요"
+                                className="block w-full rounded-lg border-slate-200 px-3.5 py-2.5 text-slate-900 text-sm placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
                             />
                         </div>
-                    </div>
 
-                    <div>
+                        {error && (
+                            <div className="flex items-start gap-2.5 rounded-xl bg-red-50 border border-red-100 px-4 py-3">
+                                <svg className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                </svg>
+                                <p className="text-sm text-red-600">{error}</p>
+                            </div>
+                        )}
+
                         <button
                             type="submit"
-                            className="flex w-full justify-center rounded-md bg-my-color-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-my-hover-color focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-my-hover-color"
+                            disabled={isLoading}
+                            className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                            로그인
+                            {isLoading ? (
+                                <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            ) : '로그인'}
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
 
-                <p className="mt-10 text-center text-sm text-gray-500">
-                    Not a member?{' '}
+                <p className="text-center text-sm text-slate-500 mt-6">
+                    계정이 없으신가요?{' '}
                     <button
-                        onClick={() => {
-                            navigate('/regist');
-                        }}
-                        className="font-semibold leading-6 text-blue-600 hover:text-blue-300"
+                        onClick={() => navigate('/regist')}
+                        className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
                     >
                         회원가입
                     </button>

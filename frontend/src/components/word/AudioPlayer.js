@@ -6,33 +6,31 @@ import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
 const AudioPlayer = ({ word, dataAllow }) => {
     const { isPlaying, togglePlay, isLoading, error } = useAudio(word);
 
-    // Define button class names based on the state
-    const buttonClassNames = `p-2 rounded-full transition-colors duration-200 ${
-        isLoading
-            ? 'bg-gray-300 dark:bg-gray-800 cursor-not-allowed' // Updated color for loading state
-            : isPlaying
-            ? 'bg-green-400 hover:bg-green-500 dark:bg-green-700 dark:hover:bg-green-600' // Gradient for playing state
-            : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600' // Updated color for idle state
-    }`;
-
     return (
         <div className="relative inline-flex items-center">
             <button
                 onClick={togglePlay}
                 disabled={isLoading}
                 data-allow={dataAllow}
-                className={buttonClassNames}
+                className={`p-2 rounded-xl transition-all duration-200 ${
+                    isLoading
+                        ? 'bg-slate-100 cursor-not-allowed'
+                        : isPlaying
+                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-500'
+                }`}
+                aria-label={isPlaying ? '정지' : '발음 듣기'}
             >
                 {isLoading ? (
-                    <div className="w-5 h-5 border-4 border-transparent border-t-teal-600 rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                 ) : isPlaying ? (
-                    <SpeakerXMarkIcon className="w-5 h-5 text-white" />
+                    <SpeakerXMarkIcon className="w-4 h-4 text-white" />
                 ) : (
-                    <SpeakerWaveIcon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                    <SpeakerWaveIcon className="w-4 h-4" />
                 )}
             </button>
             {error && (
-                <span className="absolute left-full ml-2 whitespace-nowrap text-sm text-red-500">
+                <span className="absolute left-full ml-2 whitespace-nowrap text-xs text-red-500 bg-red-50 px-2 py-1 rounded-lg">
                     {error}
                 </span>
             )}

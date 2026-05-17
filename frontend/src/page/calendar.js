@@ -1,112 +1,120 @@
-import React from "react";
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, addMonths, subMonths } from "date-fns";
+import React from 'react';
+import {
+    startOfMonth, endOfMonth, startOfWeek, endOfWeek,
+    eachDayOfInterval, format, addMonths, subMonths,
+    isSameMonth, isToday,
+} from 'date-fns';
+
+const DAYS_OF_WEEK = ['일', '월', '화', '수', '목', '금', '토'];
 
 const Calendar = () => {
-  const [currentMonth, setCurrentMonth] = React.useState(new Date());
+    const [currentMonth, setCurrentMonth] = React.useState(new Date());
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(subMonths(currentMonth, 1));
-  };
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
+    const startDate = startOfWeek(monthStart);
+    const endDate = endOfWeek(monthEnd);
 
-  const handleNextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1));
-  };
+    const allDays = eachDayOfInterval({ start: startDate, end: endDate });
 
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
-  const startDate = startOfWeek(monthStart);
-  const endDate = endOfWeek(monthEnd);
-  
-  const dateFormat = "d";
-  const days = [];
-  let daysOfWeek = [];
-
-  const allDays = eachDayOfInterval({
-    start: startDate,
-    end: endDate,
-  });
-
-  allDays.forEach(day => {
-    daysOfWeek.push(
-      <td key={day} className="border p-1 h-40 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-        <div className="flex flex-col h-40 mx-auto overflow-hidden">
-          <div className="top h-5 w-full">
-            <span className="text-gray-500">{format(day, dateFormat)}</span>
-          </div>
-          <div className="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
-        </div>
-      </td>
-    );
-    if (daysOfWeek.length === 7) {
-      days.push(<tr key={day} className="text-center h-20">{daysOfWeek}</tr>);
-      daysOfWeek = [];
+    const weeks = [];
+    for (let i = 0; i < allDays.length; i += 7) {
+        weeks.push(allDays.slice(i, i + 7));
     }
-  });
 
-  return (
-    <div className="container mx-auto mt-10">
-      <div className="wrapper bg-white rounded shadow w-full">
-        <div className="header flex justify-between border-b p-2">
-          <span className="text-lg font-bold">
-            {format(currentMonth, "yyyy MMMM")}
-          </span>
-          <div className="buttons">
-            <button onClick={handlePrevMonth} className="p-1">
-              <svg width="1em" fill="gray" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-circle" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                <path fillRule="evenodd" d="M8.354 11.354a.5.5 0 0 0 0-.708L5.707 8l2.647-2.646a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708 0z"/>
-                <path fillRule="evenodd" d="M11.5 8a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5z"/>
-              </svg>
-            </button>
-            <button onClick={handleNextMonth} className="p-1">
-              <svg width="1em" fill="gray" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-circle" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                <path fillRule="evenodd" d="M7.646 11.354a.5.5 0 0 1 0-.708L10.293 8 7.646 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"/>
-                <path fillRule="evenodd" d="M4.5 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"/>
-              </svg>
-            </button>
-          </div>
+    return (
+        <div className="animate-fade-in">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">
+                        {format(currentMonth, 'yyyy년 M월')}
+                    </h1>
+                    <p className="text-sm text-slate-400 mt-0.5">학습 일정을 관리하세요</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+                        className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                        aria-label="이전 달"
+                    >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => setCurrentMonth(new Date())}
+                        className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                    >
+                        오늘
+                    </button>
+                    <button
+                        onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+                        className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                        aria-label="다음 달"
+                    >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            {/* Calendar grid */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                {/* Day headers */}
+                <div className="grid grid-cols-7 border-b border-slate-100">
+                    {DAYS_OF_WEEK.map((day, i) => (
+                        <div
+                            key={day}
+                            className={`py-3 text-center text-xs font-semibold uppercase tracking-wide ${
+                                i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : 'text-slate-400'
+                            }`}
+                        >
+                            {day}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Weeks */}
+                {weeks.map((week, wi) => (
+                    <div
+                        key={wi}
+                        className={`grid grid-cols-7 ${wi < weeks.length - 1 ? 'border-b border-slate-100' : ''}`}
+                    >
+                        {week.map((day, di) => {
+                            const inMonth = isSameMonth(day, currentMonth);
+                            const todayFlag = isToday(day);
+                            return (
+                                <div
+                                    key={day}
+                                    className={`min-h-[100px] sm:min-h-[120px] p-2 border-r border-slate-100 last:border-r-0 transition-colors hover:bg-slate-50 cursor-pointer ${
+                                        !inMonth ? 'bg-slate-50/50' : ''
+                                    }`}
+                                >
+                                    <span
+                                        className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium transition-colors ${
+                                            todayFlag
+                                                ? 'bg-indigo-600 text-white font-bold'
+                                                : di === 0
+                                                ? 'text-red-400'
+                                                : di === 6
+                                                ? 'text-blue-400'
+                                                : inMonth
+                                                ? 'text-slate-700'
+                                                : 'text-slate-300'
+                                        }`}
+                                    >
+                                        {format(day, 'd')}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ))}
+            </div>
         </div>
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Sunday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Sun</span>
-              </th>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Monday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Mon</span>
-              </th>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Tuesday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Tue</span>
-              </th>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Wednesday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Wed</span>
-              </th>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Thursday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Thu</span>
-              </th>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Friday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Fri</span>
-              </th>
-              <th className="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span className="xl:block lg:block md:block sm:block hidden">Saturday</span>
-                <span className="xl:hidden lg:hidden md:hidden sm:hidden block">Sat</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {days}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Calendar;

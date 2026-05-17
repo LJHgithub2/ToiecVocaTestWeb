@@ -12,17 +12,12 @@ export default function Profile() {
     const { user, setIsAuthenticated } = useAuth();
     const [profile, setProfile] = useState(null);
     const [editingField, setEditingField] = useState(null);
-    const [formData, setFormData] = useState({
-        lastname: '',
-        firstname: '',
-        job: '',
-        gender: '',
-        bio: '',
-    });
+    const [formData, setFormData] = useState({ lastname: '', firstname: '', job: '', gender: '', bio: '' });
     const [modalOpen, setModalOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        const fetchProfile = async () => {
+        (async () => {
             try {
                 const data = await getProfile(user.username);
                 if (data) {
@@ -37,31 +32,30 @@ export default function Profile() {
                 } else {
                     setIsAuthenticated(false);
                 }
-            } catch (error) {
-                console.log('Failed to fetch profile data.');
+            } catch {
                 setIsAuthenticated(false);
             }
-        };
-
-        fetchProfile();
+        })();
     }, [user.username, setIsAuthenticated]);
 
     const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleSave = async () => {
-        console.log(user.username, formData);
+        setIsSaving(true);
         try {
             if (await updateProfile(user.username, formData)) {
-                setProfile({ ...profile, ...formData });
+                setProfile((prev) => ({ ...prev, ...formData }));
             } else {
                 alert('변경에 실패하였습니다.');
             }
             setEditingField(null);
             setModalOpen(false);
-        } catch (error) {
+        } catch {
             alert('프로필 업데이트에 실패하였습니다.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -77,16 +71,14 @@ export default function Profile() {
 
     const handleImageChange = async (event) => {
         const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('profile_image', file);
-
-            try {
-                await uploadProfileImage(user.username, formData);
-                window.location.reload();
-            } catch (error) {
-                alert('이미지 변경에 실패하였습니다.');
-            }
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('profile_image', file);
+        try {
+            await uploadProfileImage(user.username, fd);
+            window.location.reload();
+        } catch {
+            alert('이미지 변경에 실패하였습니다.');
         }
     };
 
@@ -94,38 +86,41 @@ export default function Profile() {
         try {
             await deleteProfileImage(user.username);
             window.location.reload();
-        } catch (error) {
+        } catch {
             alert('이미지 삭제에 실패하였습니다.');
         }
     };
 
+    const fieldLabels = {
+        job: '직업',
+        gender: '성별',
+        bio: '자기소개',
+    };
+
     if (!profile) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex items-center justify-center min-h-[300px]">
+                <div className="relative w-10 h-10">
+                    <div className="absolute inset-0 border-4 border-indigo-100 rounded-full" />
+                    <div className="absolute inset-0 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <div className="flex flex-col items-center justify-center p-3 bg-gray-100">
-                <div className="flex items-start bg-gray-100 shadow-lg rounded-lg p-6 w-full max-w-4xl">
-                    <div className="flex items-center w-full flex-col sm:flex-row">
-                        <div className="basis-1/3 flex justify-center">
-                            <ProfileImage width={64} height={64} />
+        <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
+            {/* Profile header card */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="h-24 bg-gradient-to-r from-indigo-500 to-indigo-600" />
+                <div className="px-6 pb-6">
+                    <div className="flex items-end justify-between -mt-10 mb-4">
+                        <div className="ring-4 ring-white rounded-full">
+                            <ProfileImage width={20} height={20} />
                         </div>
-                        <div className="flex flex-col basis-2/3">
-                            <label className="block text-sm font-medium text-center py-3 text-gray-700">
-                                프로필 사진
-                            </label>
-                            <div className="flex sm:flex-col items-center justify-center gap-2">
-                                <button
-                                    className="w-40 py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                                    onClick={() =>
-                                        document
-                                            .getElementById('Profile_image')
-                                            .click()
-                                    }
-                                >
-                                    프로필 사진 변경
-                                </button>
+                        <div className="flex gap-2 mt-2">
+                            <label className="cursor-pointer px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition-colors">
+                                사진 변경
                                 <input
                                     id="Profile_image"
                                     type="file"
@@ -133,136 +128,120 @@ export default function Profile() {
                                     onChange={handleImageChange}
                                     className="hidden"
                                 />
-                                <button
-                                    onClick={handleImageDelete}
-                                    className="w-40 py-2 px-4 border m-0 border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-                                >
-                                    프로필 사진 삭제
-                                </button>
-                            </div>
+                            </label>
+                            <button
+                                onClick={handleImageDelete}
+                                className="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
+                            >
+                                사진 삭제
+                            </button>
                         </div>
                     </div>
+                    <h2 className="text-xl font-bold text-slate-900">
+                        {profile.lastname}{profile.firstname}
+                    </h2>
+                    <p className="text-sm text-slate-400">@{profile.username}</p>
                 </div>
             </div>
 
-            <div className="mt-6 border-t border-gray-100">
-                <dl className="divide-y divide-gray-100">
-                    <EditableField
-                        label="이름"
-                        field="fullname"
-                        value={`${profile.lastname} ${profile.firstname}`}
-                        openEditModal={null} // 편집 버튼을 없애기 위해 null로 설정
-                    />
-                    <EditableField
-                        label="직업"
-                        field="job"
-                        value={profile.job}
-                        openEditModal={openEditModal}
-                    />
-                    <EditableField
-                        label="성별"
-                        field="gender"
-                        value={profile.gender}
-                        openEditModal={openEditModal}
-                    />
-                    <EditableField
-                        label="자기 소개"
-                        field="bio"
-                        value={profile.bio}
-                        openEditModal={openEditModal}
-                    />
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-semibold leading-6 text-gray-900">
-                            사용 단어장
-                        </dt>
-                        <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            <ul className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                                {profile.myVocabulary &&
-                                profile.myVocabulary.length > 0 ? (
-                                    profile.myVocabulary.map(
-                                        (vocabulary, index) => (
-                                            <li
-                                                key={index}
-                                                className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
-                                            >
-                                                <div className="flex w-0 flex-1 items-center">
-                                                    <span className="ml-4 flex min-w-0 flex-1 truncate">
-                                                        {vocabulary.name}
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        )
-                                    )
-                                ) : (
-                                    <li className="py-4 pl-4 pr-5 text-sm leading-6">
-                                        없음
-                                    </li>
-                                )}
-                            </ul>
-                        </dd>
+            {/* Info card */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100">
+                <div className="px-6 py-4">
+                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">프로필 정보</h3>
+                </div>
+                {[
+                    { field: 'fullname', label: '이름', value: `${profile.lastname || ''} ${profile.firstname || ''}`.trim(), editable: false },
+                    { field: 'job', label: '직업', value: profile.job, editable: true },
+                    { field: 'gender', label: '성별', value: profile.gender, editable: true },
+                    { field: 'bio', label: '자기소개', value: profile.bio, editable: true },
+                ].map(({ field, label, value, editable }) => (
+                    <div key={field} className="flex items-center justify-between px-6 py-4">
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-0.5">{label}</p>
+                            <p className="text-sm text-slate-800 break-words">{value || '-'}</p>
+                        </div>
+                        {editable && (
+                            <button
+                                onClick={() => openEditModal(field)}
+                                className="ml-4 p-2 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-indigo-600 transition-colors flex-shrink-0"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-4.036a2.5 2.5 0 113.536 3.536L7.5 21H3v-4.5l11.732-11.732z" />
+                                </svg>
+                            </button>
+                        )}
                     </div>
-                </dl>
+                ))}
             </div>
 
-            {modalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity ease-in-out duration-300">
-                    <div className="bg-white p-6 rounded-md shadow-lg max-w-md mx-auto transform transition-transform duration-300 ease-in-out">
-                        <h2 className="text-lg font-semibold mb-4">수정</h2>
-                        <input
-                            type="text"
-                            name={editingField}
-                            value={formData[editingField]}
-                            onChange={handleInputChange}
-                            className="border p-2 mb-4 rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        <div className="flex justify-end gap-4">
-                            <button
-                                onClick={handleSave}
-                                className="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                            >
-                                저장
-                            </button>
+            {/* Vocabulary card */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-100">
+                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">사용 단어장</h3>
+                </div>
+                {profile.myVocabulary && profile.myVocabulary.length > 0 ? (
+                    <ul className="divide-y divide-slate-100">
+                        {profile.myVocabulary.map((voca, i) => (
+                            <li key={i} className="flex items-center gap-3 px-6 py-3.5">
+                                <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                                    <span className="text-indigo-600 text-xs font-bold">📖</span>
+                                </div>
+                                <span className="text-sm text-slate-700 font-medium">{voca.name}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <div className="px-6 py-8 text-center">
+                        <p className="text-sm text-slate-400">사용 중인 단어장이 없습니다</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Edit modal */}
+            {modalOpen && editingField && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm animate-slide-up">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                            <h3 className="font-semibold text-slate-900">{fieldLabels[editingField] || editingField} 수정</h3>
                             <button
                                 onClick={handleCancel}
-                                className="py-2 px-4 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"
+                            >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="px-6 py-5">
+                            <input
+                                type="text"
+                                name={editingField}
+                                value={formData[editingField] || ''}
+                                onChange={handleInputChange}
+                                className="block w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder={`${fieldLabels[editingField] || editingField}을(를) 입력하세요`}
+                            />
+                        </div>
+                        <div className="px-6 py-4 border-t border-slate-100 flex gap-3 justify-end">
+                            <button
+                                onClick={handleCancel}
+                                className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
                             >
                                 취소
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-60 flex items-center gap-2"
+                            >
+                                {isSaving ? (
+                                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : '저장'}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
-    );
-}
-function EditableField({ label, field, value, openEditModal }) {
-    return (
-        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="font-semibold text-sm leading-6 text-gray-900">
-                {label}
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                <div className="flex items-center">
-                    <span className="flex-1">{value || '-'}</span>
-                    {openEditModal && (
-                        <svg
-                            onClick={() => openEditModal(field)}
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="ml-2 w-5 h-5 text-blue-600 cursor-pointer hover:text-blue-700"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15.232 5.232l3.536 3.536m-2.036-4.036a2.5 2.5 0 113.536 3.536L7.5 21H3v-4.5l11.732-11.732z"
-                            />
-                        </svg>
-                    )}
-                </div>
-            </dd>
         </div>
     );
 }

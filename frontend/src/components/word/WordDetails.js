@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { useWordContext } from '../../context/WordContext';
+
+const DetailRow = ({ label, value, isGray }) => (
+    <div className={`px-5 py-3.5 ${isGray ? 'bg-slate-50' : 'bg-white'}`}>
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">{label}</p>
+        <p className="text-sm text-slate-800 break-words leading-relaxed">{value || '-'}</p>
+    </div>
+);
 
 export default function WordDetails({ word }) {
     const { updateWord } = useWordContext();
@@ -15,79 +21,50 @@ export default function WordDetails({ word }) {
         updateWord(word.id, { difficulty: newDifficulty });
     };
 
+    const difficultyLabels = ['', '매우 쉬움', '쉬움', '보통', '어려움', '매우 어려움'];
+    const difficultyColors = ['', 'text-emerald-600', 'text-green-600', 'text-amber-600', 'text-orange-600', 'text-red-600'];
+
     return (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    단어 상세 정보
-                </h3>
+        <div className="rounded-b-2xl overflow-hidden divide-y divide-slate-100">
+            <DetailRow label="단어" value={word.word} isGray />
+            <DetailRow label="뜻" value={word.mean} />
+            <DetailRow label="품사" value={word.part_of_speech} isGray />
+            {word.synonyms && <DetailRow label="유의어" value={word.synonyms} />}
+            {word.antonyms && <DetailRow label="반의어" value={word.antonyms} isGray />}
+            <DetailRow label="예문" value={word.example_sentence} />
+            <DetailRow label="메모" value={word.memo} isGray />
+
+            {/* Difficulty */}
+            <div className="px-5 py-4 bg-white">
+                <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">난이도</p>
+                    <span className={`text-xs font-semibold ${difficultyColors[difficulty]}`}>
+                        {difficultyLabels[difficulty]}
+                    </span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={difficulty}
+                        onChange={(e) => handleDifficultyChange(Number(e.target.value))}
+                        className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-indigo-600"
+                    />
+                    <span className="text-sm font-bold text-slate-700 w-4 text-center">{difficulty}</span>
+                </div>
             </div>
-            <div className="border-t border-gray-200">
-                <dl>
-                    <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">
-                            단어
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
-                            {word.word}
-                        </dd>
-                    </div>
-                    <div className="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">
-                            뜻
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
-                            {word.mean}
-                        </dd>
-                    </div>
-                    <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">
-                            품사
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
-                            {word.part_of_speech}
-                        </dd>
-                    </div>
-                    <div className="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">
-                            예문
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
-                            {word.example_sentence || '-'}
-                        </dd>
-                    </div>
-                    <div className="bg-gray-50 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">
-                            메모
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">
-                            {word.memo || '-'}
-                        </dd>
-                    </div>
-                    <div className="bg-white px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">
-                            난이도
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            <div className="flex items-center">
-                                <AdjustmentsHorizontalIcon className="h-5 w-5 text-gray-400 mr-2" />
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="5"
-                                    value={difficulty}
-                                    onChange={(e) =>
-                                        handleDifficultyChange(
-                                            Number(e.target.value)
-                                        )
-                                    }
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                />
-                                <span className="ml-2">{difficulty}</span>
-                            </div>
-                        </dd>
-                    </div>
-                </dl>
+
+            {/* Stats */}
+            <div className="px-5 py-3.5 bg-slate-50 flex gap-6">
+                <div>
+                    <p className="text-xs text-slate-400 font-medium">정답</p>
+                    <p className="text-lg font-bold text-emerald-600">{word.correct_count ?? 0}</p>
+                </div>
+                <div>
+                    <p className="text-xs text-slate-400 font-medium">오답</p>
+                    <p className="text-lg font-bold text-red-500">{word.incorrect_count ?? 0}</p>
+                </div>
             </div>
         </div>
     );

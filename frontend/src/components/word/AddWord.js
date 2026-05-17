@@ -1,227 +1,129 @@
 import React, { useState } from 'react';
-import './AddWord.css'; // 스타일 파일
 import { useParams } from 'react-router-dom';
 import { useWordContext } from '../../context/WordContext';
 import { addWord } from '../../services/wordService';
 
-const AddWord = React.forwardRef((props, ref) => {
+const Field = ({ label, name, type = 'text', placeholder, value, onChange, required }) => (
+    <div className="space-y-1.5">
+        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
+            {label}
+            {required && <span className="text-red-400 ml-0.5">*</span>}
+        </label>
+        <input
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            required={required}
+            value={value}
+            onChange={onChange}
+            className="block w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
+        />
+    </div>
+);
+
+const AddWord = React.forwardRef((_, ref) => {
     const { setShowAddWord, words, setWords } = useWordContext();
-    const [showError, setShowError] = useState(false);
     const { id } = useParams();
 
     const [inputValues, setInputValues] = useState({
-        word: '',
-        chapter: '',
-        mean: '',
-        part_of_speech: '',
-        example_sentence: '',
-        memo: '',
+        word: '', chapter: '', mean: '', part_of_speech: '', example_sentence: '', memo: '',
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setInputValues((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
+        setInputValues((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
             const { data, status } = await addWord(id, inputValues);
-
             if (status >= 200 && status < 300) {
                 setShowAddWord(false);
                 setWords([...words, data.word]);
-
-                alert(inputValues.word + '단어 추가 성공');
+                alert(`"${inputValues.word}" 단어가 추가되었습니다.`);
             } else {
-                //단어입력 실패
-                alert('단어입력에 실패하였습니다.\n' + data.error);
+                alert('단어 추가에 실패했습니다.\n' + data.error);
             }
         } catch (error) {
-            console.log(error);
-            alert(error);
+            alert('오류가 발생했습니다.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div
-            ref={ref}
-            className="container mx-auto px-6 py-8 
-            transition transform duration-300 animate-fadeInUp"
-        >
-            <div className="bg-white border-0 shadow-lg rounded-3xl p-6">
-                <h1 className="text-2xl font-bold mb-8">단어 추가</h1>
-                <form id="form" noValidate onSubmit={handleSubmit}>
-                    <div className="flex flex-wrap md:flex-nowrap gap-9 mb-5">
-                        <div className="relative z-0 w-full">
-                            <input
-                                type="text"
-                                name="word"
-                                placeholder=" "
-                                required
-                                value={inputValues.word}
-                                onChange={handleChange}
-                                className={`pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-gray-400 border-b-2 border-x-0 border-t-0 focus:border-gray-700 focus:ring-0
-                                }`}
-                            />
-                            <label
-                                htmlFor="word"
-                                className={`absolute duration-300 top-3 pl-1 -z-1 origin-0 `}
-                            >
-                                영어단어를 입력하세요
-                            </label>
-                            <span
-                                className={`text-sm text-red-600 ${
-                                    showError ? '' : 'hidden'
-                                }`}
-                                id="error"
-                            >
-                                word is required
-                            </span>
+        <div ref={ref} className="mb-6 animate-slide-up">
+            <div className="bg-white rounded-2xl border border-indigo-100 shadow-sm overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 bg-indigo-50 border-b border-indigo-100">
+                    <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-indigo-600 flex items-center justify-center">
+                            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
                         </div>
-
-                        <div className="relative z-0 w-full">
-                            <input
-                                type="number"
-                                name="chapter"
-                                placeholder=" "
-                                required
-                                value={inputValues.chapter}
-                                onChange={handleChange}
-                                className={`pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-gray-400 border-b-2 border-x-0 border-t-0 focus:border-gray-700 focus:ring-0
-                                }`}
-                            />
-                            <div className="absolute top-0 right-0 mt-3 mr-4 text-gray-400">
-                                chapter
-                            </div>
-                            <label
-                                htmlFor="chapter"
-                                className={`absolute duration-300 top-3 pl-1 -z-1 origin-0 `}
-                            >
-                                챕터를 입력하세요(숫자만)
-                            </label>
-                            <span
-                                className={`text-sm text-red-600 ${
-                                    showError ? '' : 'hidden'
-                                }`}
-                                id="error"
-                            >
-                                chapter is required
-                            </span>
-                        </div>
-
-                        <div className="grid w-full md:grid-cols-2 gap-5 ">
-                            <div className="relative z-0 w-full">
-                                <input
-                                    type="text"
-                                    name="mean"
-                                    placeholder=" "
-                                    value={inputValues.mean}
-                                    onChange={handleChange}
-                                    className={`pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-gray-400 border-b-2 border-x-0 border-t-0 focus:border-gray-700 focus:ring-0`}
-                                />
-                                <label
-                                    htmlFor="mean"
-                                    className={`absolute duration-300 pl-1 top-3 -z-1 origin-0 `}
-                                >
-                                    영어단어 뜻을 입력하세요.
-                                </label>
-                                <span
-                                    className={`text-sm text-red-600 ${
-                                        showError ? '' : 'hidden'
-                                    }`}
-                                    id="error"
-                                >
-                                    mean is required
-                                </span>
-                            </div>
-
-                            <div className="relative z-0 w-full">
-                                <input
-                                    type="text"
-                                    name="part_of_speech"
-                                    placeholder=" "
-                                    value={inputValues.part_of_speech}
-                                    onChange={handleChange}
-                                    className={`pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-gray-400 border-b-2 border-x-0 border-t-0 focus:border-gray-700 focus:ring-0`}
-                                />
-                                <label
-                                    htmlFor="part_of_speech"
-                                    className={`absolute duration-300 top-3 pl-1 -z-1 origin-0 `}
-                                >
-                                    품사를 입력하세요.
-                                </label>
-                                <span
-                                    className={`text-sm text-red-600 ${
-                                        showError ? '' : 'hidden'
-                                    }`}
-                                    id="error"
-                                >
-                                    품사는 필수 입니다.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="relative z-0 w-full">
-                            <input
-                                type="text"
-                                name="example_sentence"
-                                placeholder=" "
-                                value={inputValues.example_sentence}
-                                onChange={handleChange}
-                                className={`pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-gray-400 border-b-2 border-x-0 border-t-0 focus:border-gray-700 focus:ring-0 overflow-hidden`}
-                            />
-                            <label
-                                htmlFor="example_sentence"
-                                className={`absolute duration-300 top-4 pl-1 -z-1 origin-0 `}
-                            >
-                                예문를 작성하세요
-                            </label>
-                            <span
-                                className={`text-sm text-red-600 ${
-                                    showError ? '' : 'hidden'
-                                }`}
-                                id="error"
-                            >
-                                example_sentence is required
-                            </span>
-                        </div>
-
-                        <div className="relative z-0 w-full mt-5">
-                            <textarea
-                                type="text"
-                                name="memo"
-                                placeholder=" "
-                                value={inputValues.memo}
-                                onChange={handleChange}
-                                className={`pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-gray-400 border-b-2 border-x-0 border-t-2 focus:border-gray-700 focus:ring-0 overflow-hidden`}
-                            />
-                            <label
-                                htmlFor="memo"
-                                className={`absolute duration-300 top-0 pl-1 -z-1 origin-0 `}
-                            >
-                                메모를 작성하세요
-                            </label>
-                            <span
-                                className={`text-sm text-red-600 ${
-                                    showError ? '' : 'hidden'
-                                }`}
-                                id="error"
-                            >
-                                memo is required
-                            </span>
-                        </div>
+                        <h3 className="font-semibold text-slate-900">새 단어 추가</h3>
                     </div>
                     <button
-                        id="button"
-                        type="submit"
-                        className="w-full px-6 py-3 mt-3 text-lg text-white transition-all duration-150 ease-linear rounded-lg shadow outline-none bg-pink-500 hover:bg-pink-600 hover:shadow-lg focus:outline-none"
+                        type="button"
+                        onClick={() => setShowAddWord(false)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:bg-indigo-100 hover:text-slate-600 transition-colors"
                     >
-                        단어 추가
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="px-6 py-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                        <Field label="영어 단어" name="word" placeholder="apple" value={inputValues.word} onChange={handleChange} required />
+                        <Field label="챕터" name="chapter" type="number" placeholder="1" value={inputValues.chapter} onChange={handleChange} />
+                        <Field label="뜻" name="mean" placeholder="사과" value={inputValues.mean} onChange={handleChange} required />
+                        <Field label="품사" name="part_of_speech" placeholder="명사" value={inputValues.part_of_speech} onChange={handleChange} />
+                        <Field label="예문" name="example_sentence" placeholder="I eat an apple." value={inputValues.example_sentence} onChange={handleChange} />
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">메모</label>
+                            <textarea
+                                name="memo"
+                                placeholder="메모를 작성하세요"
+                                value={inputValues.memo}
+                                onChange={handleChange}
+                                rows={1}
+                                className="block w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 resize-none transition-colors"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                        <button
+                            type="button"
+                            onClick={() => setShowAddWord(false)}
+                            className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                        >
+                            취소
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {isSubmitting ? (
+                                <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    단어 추가
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
